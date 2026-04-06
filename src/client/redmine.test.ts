@@ -123,13 +123,13 @@ describe("RedmineClient", () => {
     it("throws with status and body on non-ok response", async () => {
       vi.stubGlobal("fetch", makeFetch(404, "Not Found"));
 
-      await expect(client.getIssue(999)).rejects.toThrow("Redmine API error 404");
+      await expect(client.getIssue(999)).rejects.toThrow("Redmine API error: 404");
     });
 
     it("throws on 401 Unauthorized", async () => {
       vi.stubGlobal("fetch", makeFetch(401, "Unauthorized"));
 
-      await expect(client.listIssues({})).rejects.toThrow("Redmine API error 401");
+      await expect(client.listIssues({})).rejects.toThrow("Redmine API error: 401");
     });
   });
 

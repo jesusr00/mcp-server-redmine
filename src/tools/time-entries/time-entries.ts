@@ -1,5 +1,5 @@
 import type { RedmineClient } from "../../client/redmine";
-import type { ToolResult } from "../../types/common";
+import { ok, err, withErrorHandling } from "../shared";
 import {
   DeleteTimeEntrySchema,
   GetTimeEntrySchema,
@@ -8,67 +8,35 @@ import {
   UpdateTimeEntrySchema,
 } from "./schema";
 
-function ok(data: unknown): ToolResult {
-  return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
-}
-
-function err(message: string): ToolResult {
-  return { content: [{ type: "text", text: message }], isError: true };
-}
-
-export async function handleListTimeEntries(args: unknown, client: RedmineClient): Promise<ToolResult> {
+export const handleListTimeEntries = withErrorHandling(async (args: unknown, client: RedmineClient) => {
   const params = ListTimeEntriesSchema.parse(args);
   const data = await client.listTimeEntries(params);
   return ok(data);
-}
+});
 
-export async function handleGetTimeEntry(args: unknown, client: RedmineClient): Promise<ToolResult> {
+export const handleGetTimeEntry = withErrorHandling(async (args: unknown, client: RedmineClient) => {
   const { id } = GetTimeEntrySchema.parse(args);
-  try {
-    const data = await client.getTimeEntry(id);
-    return ok(data);
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
-    if (message.includes("404")) {
-      return err(`Time entry #${id} not found. Use redmine_list_time_entries to find valid IDs.`);
-    }
-    return err(message);
-  }
-}
+  const data = await client.getTimeEntry(id);
+  return ok(data);
+});
 
-export async function handleLogTime(args: unknown, client: RedmineClient): Promise<ToolResult> {
+export const handleLogTime = withErrorHandling(async (args: unknown, client: RedmineClient) => {
   const params = LogTimeSchema.parse(args);
   if (!params.issue_id && !params.project_id) {
     return err("Either issue_id or project_id is required to log time.");
   }
   const data = await client.createTimeEntry(params);
   return ok(data);
-}
+});
 
-export async function handleUpdateTimeEntry(args: unknown, client: RedmineClient): Promise<ToolResult> {
+export const handleUpdateTimeEntry = withErrorHandling(async (args: unknown, client: RedmineClient) => {
   const { id, ...params } = UpdateTimeEntrySchema.parse(args);
-  try {
-    await client.updateTimeEntry(id, params);
-    return ok({ success: true, message: `Time entry #${id} updated successfully.` });
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
-    if (message.includes("404")) {
-      return err(`Time entry #${id} not found.`);
-    }
-    return err(message);
-  }
-}
+  await client.updateTimeEntry(id, params);
+  return ok({ success: true, message: `Time entry #${id} updated successfully.` });
+});
 
-export async function handleDeleteTimeEntry(args: unknown, client: RedmineClient): Promise<ToolResult> {
+export const handleDeleteTimeEntry = withErrorHandling(async (args: unknown, client: RedmineClient) => {
   const { id } = DeleteTimeEntrySchema.parse(args);
-  try {
-    await client.deleteTimeEntry(id);
-    return ok({ success: true, message: `Time entry #${id} deleted.` });
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
-    if (message.includes("404")) {
-      return err(`Time entry #${id} not found.`);
-    }
-    return err(message);
-  }
-}
+  await client.deleteTimeEntry(id);
+  return ok({ success: true, message: `Time entry #${id} deleted.` });
+});

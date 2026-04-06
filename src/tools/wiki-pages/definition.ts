@@ -32,7 +32,7 @@ export const GET_WIKI_PAGE_TOOL_DEFINITION = {
 export const UPDATE_WIKI_PAGE_TOOL_DEFINITION = {
   name: "redmine_update_wiki_page",
   description:
-    "Create or update a Redmine wiki page. If the page does not exist, it will be created. Include 'version' for optimistic locking to avoid overwriting concurrent edits.",
+    "Create or update a Redmine wiki page. If the page does not exist, it will be created. IMPORTANT: Always fetch the page first with redmine_get_wiki_page and pass the current 'version' number to avoid silently overwriting concurrent edits.",
   inputSchema: {
     type: "object",
     properties: {
