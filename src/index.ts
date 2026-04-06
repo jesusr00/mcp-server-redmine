@@ -1,7 +1,11 @@
+import { createRequire } from "node:module";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio";
 import { RedmineClient } from "@/client/redmine";
 import { registerAllTools } from "@/tools";
+
+const require = createRequire(import.meta.url);
+const { version } = require("../package.json") as { version: string };
 
 const REDMINE_URL = process.env["REDMINE_URL"];
 const REDMINE_API_KEY = process.env["REDMINE_API_KEY"];
@@ -40,7 +44,7 @@ const validatedUrl = validateRedmineUrl(REDMINE_URL);
 
 async function main() {
   const client = new RedmineClient({ baseUrl: validatedUrl, apiKey: REDMINE_API_KEY! });
-  const server = new McpServer({ name: "redmine-mcp", version: "0.1.0" });
+  const server = new McpServer({ name: "redmine-mcp", version });
 
   registerAllTools(server, client);
 

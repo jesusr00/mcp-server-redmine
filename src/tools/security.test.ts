@@ -2,18 +2,15 @@ import { describe, expect, it } from "vitest";
 import {
   ListIssuesSchema,
   CreateIssueSchema,
-  UpdateIssueSchema,
-  GetIssueSchema,
 } from "./issues/schema";
-import { GetProjectSchema, CreateProjectSchema, ListProjectsSchema } from "./projects/schema";
+import { GetProjectSchema } from "./projects/schema";
 import {
   ListWikiPagesSchema,
   GetWikiPageSchema,
   UpdateWikiPageSchema,
   DeleteWikiPageSchema,
 } from "./wiki-pages/schema";
-import { LogTimeSchema, ListTimeEntriesSchema } from "./time-entries/schema";
-import { GetUserSchema, ListUsersSchema } from "./users/schema";
+import { LogTimeSchema } from "./time-entries/schema";
 
 describe("Schema security validations", () => {
   describe("path traversal prevention", () => {
