@@ -8,7 +8,7 @@ export default defineConfig({
   }),
   outDir: "dist",
   dts: false,
-  sourcemap: true,
+  sourcemap: !process.env.CI,
   minify: true,
   clean: true,
   shims: true,
