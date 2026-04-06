@@ -1,25 +1,19 @@
 {
   "compilerOptions": {
-    "incremental": false,
     "strict": true,
-    "outDir": "dist",
-    "target": "ES2020",
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "esModuleInterop": true,
-    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
     "paths": {
       "@/*": ["./src/*"]
     },
-    "declaration": true,
-    "declarationMap": true,
-    "emitDeclarationOnly": false,
+    "types": ["node"],
     "noImplicitAny": true,
-    "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
-    "pretty": true,
-    "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
