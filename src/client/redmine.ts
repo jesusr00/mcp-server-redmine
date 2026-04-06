@@ -28,6 +28,24 @@ export class RedmineClient {
     };
   }
 
+  private static encodePath(id: string | number): string {
+    return encodeURIComponent(String(id));
+  }
+
+  private static sanitizeResponse<T>(data: unknown): T {
+    if (data === null || typeof data !== "object") return data as T;
+    const clean: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
+      if (key === "__proto__" || key === "constructor" || key === "prototype") continue;
+      clean[key] = Array.isArray(value)
+        ? value.map((item) => RedmineClient.sanitizeResponse(item))
+        : typeof value === "object" && value !== null
+          ? RedmineClient.sanitizeResponse(value)
+          : value;
+    }
+    return clean as T;
+  }
+
   private async request<T>(
     method: string,
     path: string,
@@ -48,15 +66,19 @@ export class RedmineClient {
       method,
       headers: this.headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
+      signal: AbortSignal.timeout(30_000),
     });
 
     if (!response.ok) {
       const text = await response.text();
-      throw new Error(`Redmine API error ${response.status}: ${text}`);
+      console.error(`Redmine API error ${response.status} ${method} ${path}: ${text}`);
+      throw new Error(`Redmine API error: ${response.status}`);
     }
 
     const text = await response.text();
-    return text ? (JSON.parse(text) as T) : ({} as T);
+    if (!text) return {} as T;
+    const parsed: unknown = JSON.parse(text);
+    return RedmineClient.sanitizeResponse<T>(parsed);
   }
 
   // Issues
@@ -70,7 +92,7 @@ export class RedmineClient {
   }
 
   async getIssue(id: number, include?: string): Promise<{ issue: Issue }> {
-    return this.request("GET", `/issues/${id}.json`, undefined, include ? { include } : undefined);
+    return this.request("GET", `/issues/${RedmineClient.encodePath(id)}.json`, undefined, include ? { include } : undefined);
   }
 
   async createIssue(params: CreateIssueParams): Promise<{ issue: Issue }> {
@@ -78,11 +100,12 @@ export class RedmineClient {
   }
 
   async updateIssue(id: number, params: UpdateIssueParams): Promise<void> {
-    await this.request("PUT", `/issues/${id}.json`, { issue: params });
+    await this.request("PUT", `/issues/${RedmineClient.encodePath(id)}.json`, { issue: params });
   }
 
   async deleteIssue(id: number): Promise<void> {
-    await this.request("DELETE", `/issues/${id}.json`);
+    console.error(`[AUDIT] DELETE /issues/${id}.json at ${new Date().toISOString()}`);
+    await this.request("DELETE", `/issues/${RedmineClient.encodePath(id)}.json`);
   }
 
   // Projects
@@ -98,7 +121,7 @@ export class RedmineClient {
   }
 
   async getProject(id: string | number): Promise<{ project: Project }> {
-    return this.request("GET", `/projects/${id}.json`);
+    return this.request("GET", `/projects/${RedmineClient.encodePath(id)}.json`);
   }
 
   async createProject(params: CreateProjectParams): Promise<{ project: Project }> {
@@ -106,7 +129,7 @@ export class RedmineClient {
   }
 
   async updateProject(id: string | number, params: UpdateProjectParams): Promise<void> {
-    await this.request("PUT", `/projects/${id}.json`, { project: params });
+    await this.request("PUT", `/projects/${RedmineClient.encodePath(id)}.json`, { project: params });
   }
 
   // Users
@@ -115,7 +138,7 @@ export class RedmineClient {
   }
 
   async getUser(id: number, include?: string): Promise<{ user: User }> {
-    return this.request("GET", `/users/${id}.json`, undefined, include ? { include } : undefined);
+    return this.request("GET", `/users/${RedmineClient.encodePath(id)}.json`, undefined, include ? { include } : undefined);
   }
 
   async getCurrentUser(): Promise<{ user: User }> {
@@ -135,7 +158,7 @@ export class RedmineClient {
   }
 
   async getTimeEntry(id: number): Promise<{ time_entry: TimeEntry }> {
-    return this.request("GET", `/time_entries/${id}.json`);
+    return this.request("GET", `/time_entries/${RedmineClient.encodePath(id)}.json`);
   }
 
   async createTimeEntry(params: CreateTimeEntryParams): Promise<{ time_entry: TimeEntry }> {
@@ -143,20 +166,21 @@ export class RedmineClient {
   }
 
   async updateTimeEntry(id: number, params: UpdateTimeEntryParams): Promise<void> {
-    await this.request("PUT", `/time_entries/${id}.json`, { time_entry: params });
+    await this.request("PUT", `/time_entries/${RedmineClient.encodePath(id)}.json`, { time_entry: params });
   }
 
   async deleteTimeEntry(id: number): Promise<void> {
-    await this.request("DELETE", `/time_entries/${id}.json`);
+    console.error(`[AUDIT] DELETE /time_entries/${id}.json at ${new Date().toISOString()}`);
+    await this.request("DELETE", `/time_entries/${RedmineClient.encodePath(id)}.json`);
   }
 
   // Wiki Pages
   async listWikiPages(projectId: string | number): Promise<{ wiki_pages: WikiPage[] }> {
-    return this.request("GET", `/projects/${projectId}/wiki/index.json`);
+    return this.request("GET", `/projects/${RedmineClient.encodePath(projectId)}/wiki/index.json`);
   }
 
   async getWikiPage(projectId: string | number, title: string): Promise<{ wiki_page: WikiPage }> {
-    return this.request("GET", `/projects/${projectId}/wiki/${encodeURIComponent(title)}.json`);
+    return this.request("GET", `/projects/${RedmineClient.encodePath(projectId)}/wiki/${encodeURIComponent(title)}.json`);
   }
 
   async updateWikiPage(
@@ -164,12 +188,13 @@ export class RedmineClient {
     title: string,
     params: UpdateWikiPageParams
   ): Promise<void> {
-    await this.request("PUT", `/projects/${projectId}/wiki/${encodeURIComponent(title)}.json`, {
+    await this.request("PUT", `/projects/${RedmineClient.encodePath(projectId)}/wiki/${encodeURIComponent(title)}.json`, {
       wiki_page: params,
     });
   }
 
   async deleteWikiPage(projectId: string | number, title: string): Promise<void> {
-    await this.request("DELETE", `/projects/${projectId}/wiki/${encodeURIComponent(title)}.json`);
+    console.error(`[AUDIT] DELETE /projects/${projectId}/wiki/${title} at ${new Date().toISOString()}`);
+    await this.request("DELETE", `/projects/${RedmineClient.encodePath(projectId)}/wiki/${encodeURIComponent(title)}.json`);
   }
 }

@@ -15,8 +15,31 @@ if (!REDMINE_URL || !REDMINE_API_KEY) {
   process.exit(1);
 }
 
+function validateRedmineUrl(raw: string): string {
+  const parsed = (() => {
+    try {
+      return new URL(raw);
+    } catch {
+      console.error(`Error: REDMINE_URL is not a valid URL: ${raw}`);
+      return process.exit(1) as never;
+    }
+  })();
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    console.error(`Error: REDMINE_URL must use http or https protocol, got: ${parsed.protocol}`);
+    process.exit(1);
+  }
+  if (parsed.protocol === "http:") {
+    console.error(
+      "Warning: REDMINE_URL uses HTTP. The API key will be transmitted in cleartext. Use HTTPS in production."
+    );
+  }
+  return parsed.origin + parsed.pathname.replace(/\/+$/, "");
+}
+
+const validatedUrl = validateRedmineUrl(REDMINE_URL);
+
 async function main() {
-  const client = new RedmineClient({ baseUrl: REDMINE_URL!, apiKey: REDMINE_API_KEY! });
+  const client = new RedmineClient({ baseUrl: validatedUrl, apiKey: REDMINE_API_KEY! });
   const server = new McpServer({ name: "redmine-mcp", version: "0.1.0" });
 
   registerAllTools(server, client);
@@ -26,6 +49,7 @@ async function main() {
 }
 
 main().catch((err: unknown) => {
-  console.error("Fatal error:", err);
+  const message = err instanceof Error ? err.message : String(err);
+  console.error("Fatal error:", message);
   process.exit(1);
 });
