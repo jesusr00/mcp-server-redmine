@@ -21,7 +21,16 @@ Two environment variables are required:
 | Variable | Description |
 | --- | --- |
 | `REDMINE_URL` | Base URL of your Redmine instance, e.g. `https://redmine.example.com` |
-| `REDMINE_API_KEY` | Your Redmine API access key (found in *My account → API access key*) |
+| `REDMINE_API_KEY` | Your Redmine API access key (found in *My account > API access key*) |
+
+### Security Notes
+
+- **Use HTTPS** in production. HTTP connections will transmit the API key in cleartext (a warning is logged at startup).
+- **Use a least-privilege API key.** Create a dedicated Redmine user with only the permissions your agents need.
+- **No built-in rate limiting.** The server proxies requests directly to Redmine. If you expose this to untrusted MCP clients, consider placing a rate limiter in front of your Redmine instance.
+- All inputs are validated with Zod schemas (path traversal prevention, string length limits, date format validation, safe sort/include params).
+- Redmine API error bodies are sanitized before being returned to MCP clients.
+- Destructive operations (DELETE) are audit-logged to stderr.
 
 ## Claude Desktop Setup
 
@@ -130,8 +139,14 @@ pnpm dev
 # Tests
 pnpm test
 
+# Lint
+pnpm lint
+
 # Type check
 pnpm typecheck
+
+# Validate package exports
+npx publint
 ```
 
 ## License

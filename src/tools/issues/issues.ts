@@ -1,5 +1,5 @@
 import type { RedmineClient } from "../../client/redmine";
-import { ok, err, withErrorHandling } from "../shared";
+import { ok, withErrorHandling } from "../shared";
 import { CreateIssueSchema, DeleteIssueSchema, GetIssueSchema, ListIssuesSchema, UpdateIssueSchema } from "./schema";
 
 export const handleListIssues = withErrorHandling(async (args: unknown, client: RedmineClient) => {
