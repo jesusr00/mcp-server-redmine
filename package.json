@@ -16,8 +16,8 @@
     }
   },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "lint": "eslint --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
@@ -46,7 +46,7 @@
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-only-warn": "^1.1.0",
     "prettier": "^3.7.4",
-    "tsup": "^8.5.1",
+    "tsdown": "^0.21.7",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.49.0",
     "vitest": "^3.0.0"
