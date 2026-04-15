@@ -68,6 +68,10 @@ export const CREATE_ISSUE_TOOL_DEFINITION = {
         description: "Priority numeric ID (e.g. 1=Low, 2=Normal, 3=High)",
       },
       assigned_to_id: { type: "number", description: "Assignee user numeric ID" },
+      parent_issue_id: {
+        type: "number",
+        description: "Numeric ID of an existing issue to make this one a subtask of",
+      },
       start_date: { type: "string", description: "Start date in YYYY-MM-DD format" },
       due_date: { type: "string", description: "Due date in YYYY-MM-DD format" },
       estimated_hours: { type: "number", description: "Estimated hours" },
@@ -91,6 +95,11 @@ export const UPDATE_ISSUE_TOOL_DEFINITION = {
       status_id: { type: "number", description: "New status numeric ID" },
       priority_id: { type: "number", description: "New priority numeric ID" },
       assigned_to_id: { type: "number", description: "New assignee user numeric ID" },
+      parent_issue_id: {
+        type: "number",
+        description:
+          "Re-parent this issue under the given numeric issue ID (makes it a subtask)",
+      },
       start_date: { type: "string", description: "New start date (YYYY-MM-DD)" },
       due_date: { type: "string", description: "New due date (YYYY-MM-DD)" },
       estimated_hours: { type: "number", description: "New estimated hours" },

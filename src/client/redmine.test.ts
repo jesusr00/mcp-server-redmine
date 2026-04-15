@@ -96,6 +96,22 @@ describe("RedmineClient", () => {
       expect(JSON.parse(options.body as string)).toEqual({ issue: { project_id: "myproject", subject: "New" } });
       expect(result).toEqual(payload);
     });
+
+    it("forwards parent_issue_id to create a subtask", async () => {
+      const mockFetch = makeFetch(201, { issue: { id: 100 } });
+      vi.stubGlobal("fetch", mockFetch);
+
+      await client.createIssue({
+        project_id: "myproject",
+        subject: "Child",
+        parent_issue_id: 42,
+      });
+
+      const [, options] = mockFetch.mock.calls[0] as [string, RequestInit];
+      expect(JSON.parse(options.body as string)).toEqual({
+        issue: { project_id: "myproject", subject: "Child", parent_issue_id: 42 },
+      });
+    });
   });
 
   describe("updateIssue", () => {
@@ -103,6 +119,20 @@ describe("RedmineClient", () => {
       vi.stubGlobal("fetch", makeFetch(200, null));
 
       await expect(client.updateIssue(1, { subject: "Updated" })).resolves.toBeUndefined();
+    });
+
+    it("forwards parent_issue_id to re-parent an issue", async () => {
+      const mockFetch = makeFetch(200, null);
+      vi.stubGlobal("fetch", mockFetch);
+
+      await client.updateIssue(7, { parent_issue_id: 3 });
+
+      const [url, options] = mockFetch.mock.calls[0] as [string, RequestInit];
+      expect(url).toContain("/issues/7.json");
+      expect(options.method).toBe("PUT");
+      expect(JSON.parse(options.body as string)).toEqual({
+        issue: { parent_issue_id: 3 },
+      });
     });
   });
 
