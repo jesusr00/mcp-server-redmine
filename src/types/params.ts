@@ -47,6 +47,7 @@ export interface CreateIssueParams {
   status_id?: number;
   priority_id?: number;
   assigned_to_id?: number;
+  parent_issue_id?: number;
   start_date?: string;
   due_date?: string;
   estimated_hours?: number;
@@ -60,6 +61,7 @@ export interface UpdateIssueParams {
   status_id?: number;
   priority_id?: number;
   assigned_to_id?: number;
+  parent_issue_id?: number;
   start_date?: string;
   due_date?: string;
   estimated_hours?: number;
