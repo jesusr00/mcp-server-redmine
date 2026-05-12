@@ -124,3 +124,13 @@ export interface ListNewsParams {
   limit?: number;
   offset?: number;
 }
+
+export interface ListIssueRelationsParams {
+  issue_id: number;
+}
+
+export interface CreateIssueRelationParams {
+  issue_to_id: number;
+  relation_type?: string;
+  delay?: number;
+}

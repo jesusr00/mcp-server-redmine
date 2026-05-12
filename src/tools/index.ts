@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
 import { RedmineClient } from "@/client/redmine";
 import { registerFileTools } from "./files";
+import { registerIssueRelationTools } from "./issue-relations";
 import { registerIssueTools } from "./issues";
 import { registerNewsTools } from "./news";
 import { registerMyAccountTools } from "./my-account";
@@ -11,6 +12,7 @@ import { registerWikiPageTools } from "./wiki-pages";
 
 export function registerAllTools(server: McpServer, client: RedmineClient): void {
   registerFileTools(server, client);
+  registerIssueRelationTools(server, client);
   registerIssueTools(server, client);
   registerNewsTools(server, client);
   registerMyAccountTools(server, client);
