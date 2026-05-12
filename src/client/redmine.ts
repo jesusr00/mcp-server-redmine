@@ -2,6 +2,7 @@ import type { FileItem } from "@/types/files";
 import type { IssueRelation } from "@/types/issue-relations";
 import type { Issue } from "@/types/issues";
 import type { NewsItem } from "@/types/news";
+import type { Role, RoleDetail } from "@/types/roles";
 import type { Project } from "@/types/projects";
 import type { TimeEntry } from "@/types/time-entries";
 import type { MyAccount } from "@/types/my-account";
@@ -16,6 +17,7 @@ import type {
   ListFilesParams,
   ListIssuesParams,
   ListNewsParams,
+  ListRolesParams,
   ListProjectsParams,
   ListTimeEntriesParams,
   ListUsersParams,
@@ -100,7 +102,12 @@ export class RedmineClient {
   }
 
   async getIssue(id: number, include?: string): Promise<{ issue: Issue }> {
-    return this.request("GET", `/issues/${RedmineClient.encodePath(id)}.json`, undefined, include ? { include } : undefined);
+    return this.request(
+      "GET",
+      `/issues/${RedmineClient.encodePath(id)}.json`,
+      undefined,
+      include ? { include } : undefined
+    );
   }
 
   async createIssue(params: CreateIssueParams): Promise<{ issue: Issue }> {
@@ -162,7 +169,9 @@ export class RedmineClient {
   }
 
   async updateProject(id: string | number, params: UpdateProjectParams): Promise<void> {
-    await this.request("PUT", `/projects/${RedmineClient.encodePath(id)}.json`, { project: params });
+    await this.request("PUT", `/projects/${RedmineClient.encodePath(id)}.json`, {
+      project: params,
+    });
   }
 
   // Users
@@ -171,7 +180,12 @@ export class RedmineClient {
   }
 
   async getUser(id: number, include?: string): Promise<{ user: User }> {
-    return this.request("GET", `/users/${RedmineClient.encodePath(id)}.json`, undefined, include ? { include } : undefined);
+    return this.request(
+      "GET",
+      `/users/${RedmineClient.encodePath(id)}.json`,
+      undefined,
+      include ? { include } : undefined
+    );
   }
 
   async getCurrentUser(): Promise<{ user: User }> {
@@ -203,7 +217,9 @@ export class RedmineClient {
   }
 
   async updateTimeEntry(id: number, params: UpdateTimeEntryParams): Promise<void> {
-    await this.request("PUT", `/time_entries/${RedmineClient.encodePath(id)}.json`, { time_entry: params });
+    await this.request("PUT", `/time_entries/${RedmineClient.encodePath(id)}.json`, {
+      time_entry: params,
+    });
   }
 
   async deleteTimeEntry(id: number): Promise<void> {
@@ -228,7 +244,10 @@ export class RedmineClient {
   }
 
   async getWikiPage(projectId: string | number, title: string): Promise<{ wiki_page: WikiPage }> {
-    return this.request("GET", `/projects/${RedmineClient.encodePath(projectId)}/wiki/${encodeURIComponent(title)}.json`);
+    return this.request(
+      "GET",
+      `/projects/${RedmineClient.encodePath(projectId)}/wiki/${encodeURIComponent(title)}.json`
+    );
   }
 
   async updateWikiPage(
@@ -236,14 +255,23 @@ export class RedmineClient {
     title: string,
     params: UpdateWikiPageParams
   ): Promise<void> {
-    await this.request("PUT", `/projects/${RedmineClient.encodePath(projectId)}/wiki/${encodeURIComponent(title)}.json`, {
-      wiki_page: params,
-    });
+    await this.request(
+      "PUT",
+      `/projects/${RedmineClient.encodePath(projectId)}/wiki/${encodeURIComponent(title)}.json`,
+      {
+        wiki_page: params,
+      }
+    );
   }
 
   async deleteWikiPage(projectId: string | number, title: string): Promise<void> {
-    console.error(`[AUDIT] DELETE /projects/${projectId}/wiki/${title} at ${new Date().toISOString()}`);
-    await this.request("DELETE", `/projects/${RedmineClient.encodePath(projectId)}/wiki/${encodeURIComponent(title)}.json`);
+    console.error(
+      `[AUDIT] DELETE /projects/${projectId}/wiki/${title} at ${new Date().toISOString()}`
+    );
+    await this.request(
+      "DELETE",
+      `/projects/${RedmineClient.encodePath(projectId)}/wiki/${encodeURIComponent(title)}.json`
+    );
   }
 
   // Files
@@ -259,9 +287,29 @@ export class RedmineClient {
     );
   }
 
-  async uploadFile(projectId: string | number, params: CreateFileParams): Promise<{ file: FileItem }> {
+  async uploadFile(
+    projectId: string | number,
+    params: CreateFileParams
+  ): Promise<{ file: FileItem }> {
     return this.request("POST", `/projects/${RedmineClient.encodePath(projectId)}/files.json`, {
       file: params,
     });
+  }
+
+  // Roles
+  async listRoles(params: ListRolesParams): Promise<{ roles: Role[] }> {
+    const query: Record<string, string | number> = {};
+    if (params.limit !== undefined) query.limit = params.limit;
+    if (params.offset !== undefined) query.offset = params.offset;
+    return this.request(
+      "GET",
+      "/roles.json",
+      undefined,
+      Object.keys(query).length > 0 ? query : undefined
+    );
+  }
+
+  async getRole(id: number): Promise<{ role: RoleDetail }> {
+    return this.request("GET", `/roles/${RedmineClient.encodePath(id)}.json`);
   }
 }
