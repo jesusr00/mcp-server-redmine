@@ -122,6 +122,12 @@ Or add manually to `.mcp.json` at the root of your project:
 | `redmine_list_files` | List all files in a project with metadata |
 | `redmine_upload_file` | Upload a file to a project |
 
+### News
+
+| Tool | Description |
+| --- | --- |
+| `redmine_list_news` | List news articles with optional project filtering |
+
 ## Development
 
 ```bash
