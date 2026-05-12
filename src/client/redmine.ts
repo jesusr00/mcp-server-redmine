@@ -1,12 +1,15 @@
+import type { FileItem } from "@/types/files";
 import type { Issue } from "@/types/issues";
 import type { Project } from "@/types/projects";
 import type { TimeEntry } from "@/types/time-entries";
 import type { User } from "@/types/users";
 import type { WikiPage } from "@/types/wiki-pages";
 import type {
+  CreateFileParams,
   CreateIssueParams,
   CreateProjectParams,
   CreateTimeEntryParams,
+  ListFilesParams,
   ListIssuesParams,
   ListProjectsParams,
   ListTimeEntriesParams,
@@ -196,5 +199,24 @@ export class RedmineClient {
   async deleteWikiPage(projectId: string | number, title: string): Promise<void> {
     console.error(`[AUDIT] DELETE /projects/${projectId}/wiki/${title} at ${new Date().toISOString()}`);
     await this.request("DELETE", `/projects/${RedmineClient.encodePath(projectId)}/wiki/${encodeURIComponent(title)}.json`);
+  }
+
+  // Files
+  async listFiles(params: ListFilesParams): Promise<{ files: FileItem[]; total_count: number }> {
+    const query: Record<string, string | number> = {};
+    if (params.limit !== undefined) query.limit = params.limit;
+    if (params.offset !== undefined) query.offset = params.offset;
+    return this.request(
+      "GET",
+      `/projects/${RedmineClient.encodePath(params.project_id)}/files.json`,
+      undefined,
+      Object.keys(query).length > 0 ? query : undefined
+    );
+  }
+
+  async uploadFile(projectId: string | number, params: CreateFileParams): Promise<{ file: FileItem }> {
+    return this.request("POST", `/projects/${RedmineClient.encodePath(projectId)}/files.json`, {
+      file: params,
+    });
   }
 }

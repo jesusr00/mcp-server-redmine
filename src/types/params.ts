@@ -105,3 +105,16 @@ export interface UpdateWikiPageParams {
   comments?: string;
   version?: number;
 }
+
+export interface ListFilesParams {
+  project_id: string | number;
+  limit?: number;
+  offset?: number;
+}
+
+export interface CreateFileParams {
+  token: string;
+  filename?: string;
+  description?: string;
+  version_id?: number;
+}

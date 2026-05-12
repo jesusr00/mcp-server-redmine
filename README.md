@@ -1,6 +1,6 @@
 # mcp-server-redmine
 
-MCP server for the Redmine REST API. Exposes 21 tools covering Issues, Projects, Users, Time Entries, and Wiki Pages via stdio transport.
+MCP server for the Redmine REST API. Exposes 24 tools covering Issues, Projects, Users, Time Entries, Wiki Pages, News, and Files via stdio transport.
 
 ## Installation
 
@@ -114,6 +114,13 @@ Or add manually to `.mcp.json` at the root of your project:
 | `redmine_get_wiki_page` | Get wiki page content by project and title |
 | `redmine_update_wiki_page` | Create or update a wiki page |
 | `redmine_delete_wiki_page` | Permanently delete a wiki page (requires admin) |
+
+### Files
+
+| Tool | Description |
+| --- | --- |
+| `redmine_list_files` | List all files in a project with metadata |
+| `redmine_upload_file` | Upload a file to a project |
 
 ## Development
 
