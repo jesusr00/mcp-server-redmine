@@ -1,7 +1,6 @@
 export const LIST_ISSUES_TOOL_DEFINITION = {
   name: "redmine_list_issues",
-  description:
-    "List Redmine issues with optional filters. Returns paginated results with issue ID, subject, status, priority, and assignee. Use this to browse or search for issues before fetching details.",
+  description: "[Stable] List Redmine issues with optional filters. Returns paginated results with issue ID, subject, status, priority, and assignee. Use this to browse or search for issues before fetching details.",
   inputSchema: {
     type: "object",
     properties: {
@@ -31,7 +30,7 @@ export const LIST_ISSUES_TOOL_DEFINITION = {
 export const GET_ISSUE_TOOL_DEFINITION = {
   name: "redmine_get_issue",
   description:
-    "Get full details of a single Redmine issue by its numeric ID, including description, status, dates, and optional extras like journals (comments) and attachments.",
+    "[Stable] Get full details of a single Redmine issue by its numeric ID, including description, status, dates, and optional extras like journals (comments) and attachments.",
   inputSchema: {
     type: "object",
     properties: {
@@ -48,7 +47,7 @@ export const GET_ISSUE_TOOL_DEFINITION = {
 
 export const CREATE_ISSUE_TOOL_DEFINITION = {
   name: "redmine_create_issue",
-  description: "Create a new Redmine issue. Returns the created issue with its assigned ID.",
+  description: "[Stable] Create a new Redmine issue. Returns the created issue with its assigned ID.",
   inputSchema: {
     type: "object",
     properties: {
@@ -84,7 +83,7 @@ export const CREATE_ISSUE_TOOL_DEFINITION = {
 export const UPDATE_ISSUE_TOOL_DEFINITION = {
   name: "redmine_update_issue",
   description:
-    "Update an existing Redmine issue. Only provided fields are changed. Use 'notes' to add a journal comment.",
+    "[Stable] Update an existing Redmine issue. Only provided fields are changed. Use 'notes' to add a journal comment.",
   inputSchema: {
     type: "object",
     properties: {
@@ -113,7 +112,7 @@ export const UPDATE_ISSUE_TOOL_DEFINITION = {
 export const DELETE_ISSUE_TOOL_DEFINITION = {
   name: "redmine_delete_issue",
   description:
-    "Permanently delete a Redmine issue and all its journals and attachments. This action cannot be undone.",
+    "[Stable] Permanently delete a Redmine issue and all its journals and attachments. This action cannot be undone.",
   inputSchema: {
     type: "object",
     properties: {

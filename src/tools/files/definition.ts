@@ -1,7 +1,7 @@
 export const LIST_FILES_TOOL_DEFINITION = {
   name: "redmine_list_files",
   description:
-    "List all files in a Redmine project. Returns file metadata including name, size, type, author, and download URL.",
+    "[Alpha] List all files in a Redmine project. Returns file metadata including name, size, type, author, and download URL.",
   inputSchema: {
     type: "object",
     properties: {
@@ -19,7 +19,7 @@ export const LIST_FILES_TOOL_DEFINITION = {
 export const UPLOAD_FILE_TOOL_DEFINITION = {
   name: "redmine_upload_file",
   description:
-    "Upload a file to a Redmine project. IMPORTANT: You must first upload the file using Redmine's attachment API to get a token, then use that token here to associate it with a project. See Redmine's file upload workflow for details.",
+    "[Alpha] Upload a file to a Redmine project. IMPORTANT: You must first upload the file using Redmine's attachment API to get a token, then use that token here to associate it with a project. See Redmine's file upload workflow for details.",
   inputSchema: {
     type: "object",
     properties: {

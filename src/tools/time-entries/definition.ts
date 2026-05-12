@@ -1,7 +1,7 @@
 export const LIST_TIME_ENTRIES_TOOL_DEFINITION = {
   name: "redmine_list_time_entries",
   description:
-    "List Redmine time entries with optional filters. Returns hours logged, activity, issue, and project for each entry.",
+    "[Stable] List Redmine time entries with optional filters. Returns hours logged, activity, issue, and project for each entry.",
   inputSchema: {
     type: "object",
     properties: {
@@ -19,7 +19,7 @@ export const LIST_TIME_ENTRIES_TOOL_DEFINITION = {
 
 export const GET_TIME_ENTRY_TOOL_DEFINITION = {
   name: "redmine_get_time_entry",
-  description: "Get details of a single time entry by its numeric ID.",
+  description: "[Stable] Get details of a single time entry by its numeric ID.",
   inputSchema: {
     type: "object",
     properties: {
@@ -32,7 +32,7 @@ export const GET_TIME_ENTRY_TOOL_DEFINITION = {
 export const LOG_TIME_TOOL_DEFINITION = {
   name: "redmine_log_time",
   description:
-    "Log time against a Redmine issue or project. Either issue_id or project_id is required. Returns the created time entry.",
+    "[Stable] Log time against a Redmine issue or project. Either issue_id or project_id is required. Returns the created time entry.",
   inputSchema: {
     type: "object",
     properties: {
@@ -61,7 +61,7 @@ export const LOG_TIME_TOOL_DEFINITION = {
 
 export const UPDATE_TIME_ENTRY_TOOL_DEFINITION = {
   name: "redmine_update_time_entry",
-  description: "Update an existing Redmine time entry. Only provided fields are changed.",
+  description: "[Stable] Update an existing Redmine time entry. Only provided fields are changed.",
   inputSchema: {
     type: "object",
     properties: {
@@ -77,7 +77,7 @@ export const UPDATE_TIME_ENTRY_TOOL_DEFINITION = {
 
 export const DELETE_TIME_ENTRY_TOOL_DEFINITION = {
   name: "redmine_delete_time_entry",
-  description: "Permanently delete a Redmine time entry. This action cannot be undone.",
+  description: "[Stable] Permanently delete a Redmine time entry. This action cannot be undone.",
   inputSchema: {
     type: "object",
     properties: {

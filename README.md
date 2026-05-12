@@ -1,6 +1,6 @@
 # mcp-server-redmine
 
-MCP server for the Redmine REST API. Exposes 24 tools covering Issues, Projects, Users, Time Entries, Wiki Pages, News, and Files via stdio transport.
+MCP server for the Redmine REST API. Exposes 26 tools covering Issues, Projects, Users, Time Entries, Wiki Pages, News, Files, and Roles via stdio transport.
 
 ## Installation
 
@@ -71,56 +71,79 @@ Or add manually to `.mcp.json` at the root of your project:
 
 ### Issues
 
-| Tool | Description |
-| --- | --- |
-| `redmine_list_issues` | List issues with filters: project, status, tracker, assignee, priority, pagination |
-| `redmine_get_issue` | Get a single issue by numeric ID |
-| `redmine_create_issue` | Create a new issue in a project |
-| `redmine_update_issue` | Update fields on an existing issue |
-| `redmine_delete_issue` | Permanently delete an issue |
+| Tool | Status | Description |
+| --- | --- | --- |
+| `redmine_list_issues` | ✓ | List issues with filters: project, status, tracker, assignee, priority, pagination |
+| `redmine_get_issue` | ✓ | Get a single issue by numeric ID |
+| `redmine_create_issue` | ✓ | Create a new issue in a project |
+| `redmine_update_issue` | ✓ | Update fields on an existing issue |
+| `redmine_delete_issue` | ✓ | Permanently delete an issue |
 
 ### Projects
 
-| Tool | Description |
-| --- | --- |
-| `redmine_list_projects` | List all accessible projects |
-| `redmine_get_project` | Get a project by identifier (slug) or numeric ID |
-| `redmine_create_project` | Create a new project |
-| `redmine_update_project` | Update an existing project |
+| Tool | Status | Description |
+| --- | --- | --- |
+| `redmine_list_projects` | ✓ | List all accessible projects |
+| `redmine_get_project` | ✓ | Get a project by identifier (slug) or numeric ID |
+| `redmine_create_project` | ✓ | Create a new project |
+| `redmine_update_project` | ✓ | Update an existing project |
 
 ### Users
 
-| Tool | Description |
-| --- | --- |
-| `redmine_list_users` | List users (requires admin privileges) |
-| `redmine_get_user` | Get a user by numeric ID |
-| `redmine_get_current_user` | Get the authenticated user's profile |
+| Tool | Status | Description |
+| --- | --- | --- |
+| `redmine_list_users` | ✓ | List users (requires admin privileges) |
+| `redmine_get_user` | ✓ | Get a user by numeric ID |
+| `redmine_get_current_user` | ✓ | Get the authenticated user's profile |
 
 ### Time Entries
 
-| Tool | Description |
-| --- | --- |
-| `redmine_list_time_entries` | List time entries with filters: project, issue, user, date range |
-| `redmine_get_time_entry` | Get a single time entry by numeric ID |
-| `redmine_log_time` | Log hours against an issue or project |
-| `redmine_update_time_entry` | Update an existing time entry |
-| `redmine_delete_time_entry` | Permanently delete a time entry |
+| Tool | Status | Description |
+| --- | --- | --- |
+| `redmine_list_time_entries` | ✓ | List time entries with filters: project, issue, user, date range |
+| `redmine_get_time_entry` | ✓ | Get a single time entry by numeric ID |
+| `redmine_log_time` | ✓ | Log hours against an issue or project |
+| `redmine_update_time_entry` | ✓ | Update an existing time entry |
+| `redmine_delete_time_entry` | ✓ | Permanently delete a time entry |
 
 ### Wiki Pages
 
-| Tool | Description |
-| --- | --- |
-| `redmine_list_wiki_pages` | List all wiki pages in a project |
-| `redmine_get_wiki_page` | Get wiki page content by project and title |
-| `redmine_update_wiki_page` | Create or update a wiki page |
-| `redmine_delete_wiki_page` | Permanently delete a wiki page (requires admin) |
+| Tool | Status | Description |
+| --- | --- | --- |
+| `redmine_list_wiki_pages` | ⚠ | List all wiki pages in a project |
+| `redmine_get_wiki_page` | ⚠ | Get wiki page content by project and title |
+| `redmine_update_wiki_page` | ⚠ | Create or update a wiki page |
+| `redmine_delete_wiki_page` | ⚠ | Permanently delete a wiki page (requires admin) |
+
+### News
+
+| Tool | Status | Description |
+| --- | --- | --- |
+| `redmine_list_news` | ⚡ | List news articles with optional project filtering |
 
 ### Files
 
-| Tool | Description |
+| Tool | Status | Description |
+| --- | --- | --- |
+| `redmine_list_files` | ⚠ | List all files in a project with metadata |
+| `redmine_upload_file` | ⚠ | Upload a file to a project |
+
+### Roles
+
+| Tool | Status | Description |
+| --- | --- | --- |
+| `redmine_list_roles` | ⚠ | List all roles with IDs and names |
+| `redmine_get_role` | ⚠ | Get role details including permissions |
+
+## API Stability
+
+The tools follow Redmine's API resource stability levels:
+
+| Status | Meaning |
 | --- | --- |
-| `redmine_list_files` | List all files in a project with metadata |
-| `redmine_upload_file` | Upload a file to a project |
+| ✓ Stable | Feature complete, no major changes planned |
+| ⚠ Alpha | Major functionality in place, needs feedback from integrators |
+| ⚡ Prototype | Rough implementation, possible breaking changes. Not recommended for production |
 
 ## Development
 

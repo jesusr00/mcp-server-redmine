@@ -1,6 +1,6 @@
 export const LIST_PROJECTS_TOOL_DEFINITION = {
   name: "redmine_list_projects",
-  description: "List all Redmine projects the API user has access to, with pagination support.",
+  description: "[Stable] List all Redmine projects the API user has access to, with pagination support.",
   inputSchema: {
     type: "object",
     properties: {
@@ -18,7 +18,7 @@ export const LIST_PROJECTS_TOOL_DEFINITION = {
 export const GET_PROJECT_TOOL_DEFINITION = {
   name: "redmine_get_project",
   description:
-    "Get details of a single Redmine project by its identifier (string slug) or numeric ID.",
+    "[Stable] Get details of a single Redmine project by its identifier (string slug) or numeric ID.",
   inputSchema: {
     type: "object",
     properties: {
@@ -33,7 +33,7 @@ export const GET_PROJECT_TOOL_DEFINITION = {
 
 export const CREATE_PROJECT_TOOL_DEFINITION = {
   name: "redmine_create_project",
-  description: "Create a new Redmine project. Returns the created project.",
+  description: "[Stable] Create a new Redmine project. Returns the created project.",
   inputSchema: {
     type: "object",
     properties: {
@@ -58,7 +58,7 @@ export const CREATE_PROJECT_TOOL_DEFINITION = {
 
 export const UPDATE_PROJECT_TOOL_DEFINITION = {
   name: "redmine_update_project",
-  description: "Update an existing Redmine project. Only provided fields are changed.",
+  description: "[Stable] Update an existing Redmine project. Only provided fields are changed.",
   inputSchema: {
     type: "object",
     properties: {
