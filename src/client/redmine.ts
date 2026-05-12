@@ -1,4 +1,5 @@
 import type { FileItem } from "@/types/files";
+import type { IssueRelation } from "@/types/issue-relations";
 import type { Issue } from "@/types/issues";
 import type { NewsItem } from "@/types/news";
 import type { Project } from "@/types/projects";
@@ -8,6 +9,7 @@ import type { WikiPage } from "@/types/wiki-pages";
 import type {
   CreateFileParams,
   CreateIssueParams,
+  CreateIssueRelationParams,
   CreateProjectParams,
   CreateTimeEntryParams,
   ListFilesParams,
@@ -111,6 +113,31 @@ export class RedmineClient {
   async deleteIssue(id: number): Promise<void> {
     console.error(`[AUDIT] DELETE /issues/${id}.json at ${new Date().toISOString()}`);
     await this.request("DELETE", `/issues/${RedmineClient.encodePath(id)}.json`);
+  }
+
+  // Issue Relations
+  async listIssueRelations(issueId: number): Promise<{ relations: IssueRelation[] }> {
+    return this.request("GET", `/issues/${RedmineClient.encodePath(issueId)}/relations.json`);
+  }
+
+  async getIssueRelation(id: number): Promise<{ relation: IssueRelation }> {
+    return this.request("GET", `/relations/${RedmineClient.encodePath(id)}.json`);
+  }
+
+  async createIssueRelation(
+    issueId: number,
+    params: CreateIssueRelationParams
+  ): Promise<{ relation: IssueRelation }> {
+    return this.request(
+      "POST",
+      `/issues/${RedmineClient.encodePath(issueId)}/relations.json`,
+      { relation: params }
+    );
+  }
+
+  async deleteIssueRelation(id: number): Promise<void> {
+    console.error(`[AUDIT] DELETE /relations/${id}.json at ${new Date().toISOString()}`);
+    await this.request("DELETE", `/relations/${RedmineClient.encodePath(id)}.json`);
   }
 
   // Projects
