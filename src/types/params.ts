@@ -134,3 +134,8 @@ export interface CreateIssueRelationParams {
   relation_type?: string;
   delay?: number;
 }
+
+export interface ListRolesParams {
+  limit?: number;
+  offset?: number;
+}

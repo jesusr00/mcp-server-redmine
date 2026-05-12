@@ -171,6 +171,13 @@ The tools follow Redmine's API resource stability levels:
 | --- | --- |
 | `redmine_list_news` | List news articles with optional project filtering |
 
+### Roles
+
+| Tool | Description |
+| --- | --- |
+| `redmine_list_roles` | List all roles with IDs and names |
+| `redmine_get_role` | Get role details including permissions |
+
 ## Development
 
 ```bash
