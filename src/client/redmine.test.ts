@@ -188,6 +188,32 @@ describe("RedmineClient", () => {
     });
   });
 
+  describe("getMyAccount", () => {
+    it("calls GET /my/account.json", async () => {
+      const payload = {
+        user: {
+          id: 3,
+          login: "dlopper",
+          admin: false,
+          firstname: "Dave",
+          lastname: "Lopper",
+          mail: "dlopper@somenet.foo",
+          created_on: "2006-07-19T17:33:19Z",
+          api_key: "abc123",
+          custom_fields: [{ id: 4, name: "Phone number", value: "" }],
+        },
+      };
+      const mockFetch = makeFetch(200, payload);
+      vi.stubGlobal("fetch", mockFetch);
+
+      const result = await client.getMyAccount();
+
+      const [url] = mockFetch.mock.calls[0] as [string];
+      expect(url).toContain("/my/account.json");
+      expect(result).toEqual(payload);
+    });
+  });
+
   describe("logTime (createTimeEntry)", () => {
     it("calls POST /time_entries.json with wrapped body", async () => {
       const payload = { time_entry: { id: 10, hours: 2.5 } };

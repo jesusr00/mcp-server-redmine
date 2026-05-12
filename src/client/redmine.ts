@@ -3,6 +3,7 @@ import type { Issue } from "@/types/issues";
 import type { NewsItem } from "@/types/news";
 import type { Project } from "@/types/projects";
 import type { TimeEntry } from "@/types/time-entries";
+import type { MyAccount } from "@/types/my-account";
 import type { User } from "@/types/users";
 import type { WikiPage } from "@/types/wiki-pages";
 import type {
@@ -148,6 +149,10 @@ export class RedmineClient {
 
   async getCurrentUser(): Promise<{ user: User }> {
     return this.request("GET", "/users/current.json");
+  }
+
+  async getMyAccount(): Promise<{ user: MyAccount }> {
+    return this.request("GET", "/my/account.json");
   }
 
   // Time Entries
