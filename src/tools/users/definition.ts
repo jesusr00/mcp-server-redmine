@@ -1,7 +1,7 @@
 export const LIST_USERS_TOOL_DEFINITION = {
   name: "redmine_list_users",
   description:
-    "List Redmine users. Requires admin privileges. Returns user IDs, login names, and email addresses.",
+    "[Stable] List Redmine users. Requires admin privileges. Returns user IDs, login names, and email addresses.",
   inputSchema: {
     type: "object",
     properties: {
@@ -20,7 +20,7 @@ export const LIST_USERS_TOOL_DEFINITION = {
 
 export const GET_USER_TOOL_DEFINITION = {
   name: "redmine_get_user",
-  description: "Get details of a single Redmine user by numeric ID.",
+  description: "[Stable] Get details of a single Redmine user by numeric ID.",
   inputSchema: {
     type: "object",
     properties: {
@@ -34,7 +34,7 @@ export const GET_USER_TOOL_DEFINITION = {
 export const GET_CURRENT_USER_TOOL_DEFINITION = {
   name: "redmine_get_current_user",
   description:
-    "Get the details of the currently authenticated Redmine user (identified by REDMINE_API_KEY).",
+    "[Stable] Get the details of the currently authenticated Redmine user (identified by REDMINE_API_KEY).",
   inputSchema: {
     type: "object",
     properties: {},

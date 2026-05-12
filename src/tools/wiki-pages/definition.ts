@@ -1,6 +1,6 @@
 export const LIST_WIKI_PAGES_TOOL_DEFINITION = {
   name: "redmine_list_wiki_pages",
-  description: "List all wiki pages in a Redmine project.",
+  description: "[Alpha] List all wiki pages in a Redmine project.",
   inputSchema: {
     type: "object",
     properties: {
@@ -15,7 +15,7 @@ export const LIST_WIKI_PAGES_TOOL_DEFINITION = {
 
 export const GET_WIKI_PAGE_TOOL_DEFINITION = {
   name: "redmine_get_wiki_page",
-  description: "Get the content and metadata of a Redmine wiki page by project and page title.",
+  description: "[Alpha] Get the content and metadata of a Redmine wiki page by project and page title.",
   inputSchema: {
     type: "object",
     properties: {
@@ -32,7 +32,7 @@ export const GET_WIKI_PAGE_TOOL_DEFINITION = {
 export const UPDATE_WIKI_PAGE_TOOL_DEFINITION = {
   name: "redmine_update_wiki_page",
   description:
-    "Create or update a Redmine wiki page. If the page does not exist, it will be created. IMPORTANT: Always fetch the page first with redmine_get_wiki_page and pass the current 'version' number to avoid silently overwriting concurrent edits.",
+    "[Alpha] Create or update a Redmine wiki page. If the page does not exist, it will be created. IMPORTANT: Always fetch the page first with redmine_get_wiki_page and pass the current 'version' number to avoid silently overwriting concurrent edits.",
   inputSchema: {
     type: "object",
     properties: {
@@ -52,7 +52,7 @@ export const UPDATE_WIKI_PAGE_TOOL_DEFINITION = {
 export const DELETE_WIKI_PAGE_TOOL_DEFINITION = {
   name: "redmine_delete_wiki_page",
   description:
-    "Permanently delete a Redmine wiki page. Requires admin privileges. This action cannot be undone.",
+    "[Alpha] Permanently delete a Redmine wiki page. Requires admin privileges. This action cannot be undone.",
   inputSchema: {
     type: "object",
     properties: {
