@@ -118,3 +118,9 @@ export interface CreateFileParams {
   description?: string;
   version_id?: number;
 }
+
+export interface ListNewsParams {
+  project_id?: string | number;
+  limit?: number;
+  offset?: number;
+}

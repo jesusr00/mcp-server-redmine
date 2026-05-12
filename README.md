@@ -145,6 +145,12 @@ The tools follow Redmine's API resource stability levels:
 | ⚠ Alpha | Major functionality in place, needs feedback from integrators |
 | ⚡ Prototype | Rough implementation, possible breaking changes. Not recommended for production |
 
+### News
+
+| Tool | Description |
+| --- | --- |
+| `redmine_list_news` | List news articles with optional project filtering |
+
 ## Development
 
 ```bash

@@ -1,5 +1,6 @@
 import type { FileItem } from "@/types/files";
 import type { Issue } from "@/types/issues";
+import type { NewsItem } from "@/types/news";
 import type { Project } from "@/types/projects";
 import type { TimeEntry } from "@/types/time-entries";
 import type { User } from "@/types/users";
@@ -11,6 +12,7 @@ import type {
   CreateTimeEntryParams,
   ListFilesParams,
   ListIssuesParams,
+  ListNewsParams,
   ListProjectsParams,
   ListTimeEntriesParams,
   ListUsersParams,
@@ -175,6 +177,17 @@ export class RedmineClient {
   async deleteTimeEntry(id: number): Promise<void> {
     console.error(`[AUDIT] DELETE /time_entries/${id}.json at ${new Date().toISOString()}`);
     await this.request("DELETE", `/time_entries/${RedmineClient.encodePath(id)}.json`);
+  }
+
+  // News
+  async listNews(
+    params: ListNewsParams
+  ): Promise<{ news: NewsItem[]; total_count: number }> {
+    const { project_id, ...query } = params;
+    const path = project_id
+      ? `/projects/${RedmineClient.encodePath(project_id)}/news.json`
+      : "/news.json";
+    return this.request("GET", path, undefined, query as Record<string, string | number>);
   }
 
   // Wiki Pages
