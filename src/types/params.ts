@@ -134,3 +134,17 @@ export interface CreateIssueRelationParams {
   relation_type?: string;
   delay?: number;
 }
+
+export interface ListMembershipsParams {
+  limit?: number;
+  offset?: number;
+}
+
+export interface CreateMembershipParams {
+  user_id: number;
+  role_ids: number[];
+}
+
+export interface UpdateMembershipParams {
+  role_ids: number[];
+}

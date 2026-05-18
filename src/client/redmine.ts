@@ -2,6 +2,7 @@ import type { FileItem } from "@/types/files";
 import type { IssueRelation } from "@/types/issue-relations";
 import type { Issue } from "@/types/issues";
 import type { NewsItem } from "@/types/news";
+import type { Membership } from "@/types/memberships";
 import type { Project } from "@/types/projects";
 import type { TimeEntry } from "@/types/time-entries";
 import type { MyAccount } from "@/types/my-account";
@@ -11,16 +12,19 @@ import type {
   CreateFileParams,
   CreateIssueParams,
   CreateIssueRelationParams,
+  CreateMembershipParams,
   CreateProjectParams,
   CreateTimeEntryParams,
   ListFilesParams,
   ListIssuesParams,
   ListNewsParams,
+  ListMembershipsParams,
   ListProjectsParams,
   ListTimeEntriesParams,
   ListUsersParams,
   RedmineConfig,
   UpdateIssueParams,
+  UpdateMembershipParams,
   UpdateProjectParams,
   UpdateTimeEntryParams,
   UpdateWikiPageParams,
@@ -220,6 +224,46 @@ export class RedmineClient {
       ? `/projects/${RedmineClient.encodePath(project_id)}/news.json`
       : "/news.json";
     return this.request("GET", path, undefined, query as Record<string, string | number>);
+  }
+
+  // Memberships
+  async listMemberships(
+    projectId: string | number,
+    params: ListMembershipsParams
+  ): Promise<{ memberships: Membership[]; total_count: number }> {
+    return this.request(
+      "GET",
+      `/projects/${RedmineClient.encodePath(projectId)}/memberships.json`,
+      undefined,
+      params as Record<string, string | number>
+    );
+  }
+
+  async getMembership(id: number): Promise<{ membership: Membership }> {
+    return this.request("GET", `/memberships/${RedmineClient.encodePath(id)}.json`);
+  }
+
+  async createMembership(
+    projectId: string | number,
+    params: CreateMembershipParams
+  ): Promise<{ membership: Membership }> {
+    return this.request(
+      "POST",
+      `/projects/${RedmineClient.encodePath(projectId)}/memberships.json`,
+      { membership: params }
+    );
+  }
+
+  async updateMembership(id: number, params: UpdateMembershipParams): Promise<void> {
+    await this.request(
+      "PUT",
+      `/memberships/${RedmineClient.encodePath(id)}.json`,
+      { membership: params }
+    );
+  }
+
+  async deleteMembership(id: number): Promise<void> {
+    await this.request("DELETE", `/memberships/${RedmineClient.encodePath(id)}.json`);
   }
 
   // Wiki Pages

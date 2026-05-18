@@ -1,6 +1,6 @@
 # mcp-server-redmine
 
-MCP server for the Redmine REST API. Exposes 30 tools covering Issues, Issue Relations, Projects, Users, Time Entries, Wiki Pages, News, Files, and Roles via stdio transport.
+MCP server for the Redmine REST API. Exposes 30 tools covering Issues, Issue Relations, Projects, Users, Time Entries, Wiki Pages, News, Files, Roles, and Project Memberships via stdio transport.
 
 ## Installation
 
@@ -146,15 +146,6 @@ Or add manually to `.mcp.json` at the root of your project:
 | `redmine_list_roles` | ⚠      | List all roles with IDs and names      |
 | `redmine_get_role`   | ⚠      | Get role details including permissions |
 
-### Issues Relations
-
-| Tool                    | Status | Description                                                    |
-| ----------------------- | ------ | -------------------------------------------------------------- |
-| `list_issue_relations`  | ⚠      | List all relations for a given Redmine issue                   |
-| `get_issue_relation`    | ⚠      | Get a single Redmine issue relation by its numeric ID.         |
-| `create_issue_relation` | ⚠      | Create a relation between two Redmine issues.                  |
-| `delete_issue_relation` | ⚠      | Permanently delete a Redmine issue relation by its numeric ID. |
-
 ## API Stability
 
 The tools follow Redmine's API resource stability levels:
@@ -164,12 +155,6 @@ The tools follow Redmine's API resource stability levels:
 | ✓ Stable     | Feature complete, no major changes planned                                      |
 | ⚠ Alpha      | Major functionality in place, needs feedback from integrators                   |
 | ⚡ Prototype | Rough implementation, possible breaking changes. Not recommended for production |
-
-### News
-
-| Tool | Description |
-| --- | --- |
-| `redmine_list_news` | List news articles with optional project filtering |
 
 ## Development
 
