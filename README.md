@@ -27,6 +27,8 @@ Two environment variables are required:
 
 Add to `claude_desktop_config.json`:
 
+> **Note:** In Claude Desktop, open **Settings → Developer → Edit Config**. This opens (or creates) `claude_desktop_config.json` in your default editor. After saving, fully quit Claude Desktop (not just minimize) and reopen it for the changes to take effect.
+
 ```json
 {
   "mcpServers": {
