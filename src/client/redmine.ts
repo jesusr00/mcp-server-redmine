@@ -4,6 +4,7 @@ import type { Issue } from "@/types/issues";
 import type { NewsItem } from "@/types/news";
 import type { Role, RoleDetail } from "@/types/roles";
 import type { Project } from "@/types/projects";
+import type { SearchResult } from "@/types/search";
 import type { TimeEntry } from "@/types/time-entries";
 import type { MyAccount } from "@/types/my-account";
 import type { User } from "@/types/users";
@@ -19,6 +20,7 @@ import type {
   ListNewsParams,
   ListRolesParams,
   ListProjectsParams,
+  SearchParams,
   ListTimeEntriesParams,
   ListUsersParams,
   RedmineConfig,
@@ -136,11 +138,9 @@ export class RedmineClient {
     issueId: number,
     params: CreateIssueRelationParams
   ): Promise<{ relation: IssueRelation }> {
-    return this.request(
-      "POST",
-      `/issues/${RedmineClient.encodePath(issueId)}/relations.json`,
-      { relation: params }
-    );
+    return this.request("POST", `/issues/${RedmineClient.encodePath(issueId)}/relations.json`, {
+      relation: params,
+    });
   }
 
   async deleteIssueRelation(id: number): Promise<void> {
@@ -228,14 +228,24 @@ export class RedmineClient {
   }
 
   // News
-  async listNews(
-    params: ListNewsParams
-  ): Promise<{ news: NewsItem[]; total_count: number }> {
+  async listNews(params: ListNewsParams): Promise<{ news: NewsItem[]; total_count: number }> {
     const { project_id, ...query } = params;
     const path = project_id
       ? `/projects/${RedmineClient.encodePath(project_id)}/news.json`
       : "/news.json";
     return this.request("GET", path, undefined, query as Record<string, string | number>);
+  }
+
+  // Search
+  async search(
+    params: SearchParams
+  ): Promise<{ results: SearchResult[]; total_count: number; limit: number; offset: number }> {
+    const query: Record<string, string | number> = {};
+    for (const [key, value] of Object.entries(params)) {
+      if (value === undefined || value === null) continue;
+      query[key] = typeof value === "boolean" ? (value ? 1 : 0) : value;
+    }
+    return this.request("GET", "/search.json", undefined, query);
   }
 
   // Wiki Pages

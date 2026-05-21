@@ -93,7 +93,9 @@ describe("RedmineClient", () => {
 
       const [, options] = mockFetch.mock.calls[0] as [string, RequestInit];
       expect(options.method).toBe("POST");
-      expect(JSON.parse(options.body as string)).toEqual({ issue: { project_id: "myproject", subject: "New" } });
+      expect(JSON.parse(options.body as string)).toEqual({
+        issue: { project_id: "myproject", subject: "New" },
+      });
       expect(result).toEqual(payload);
     });
 
@@ -210,6 +212,35 @@ describe("RedmineClient", () => {
 
       const [url] = mockFetch.mock.calls[0] as [string];
       expect(url).toContain("/my/account.json");
+      expect(result).toEqual(payload);
+    });
+  });
+
+  describe("search", () => {
+    it("calls GET /search.json with query params", async () => {
+      const payload = {
+        results: [
+          {
+            id: 10,
+            title: "Issue #10: Search me",
+            type: "issue",
+            url: "https://redmine.example.com/issues/10",
+          },
+        ],
+        total_count: 1,
+        limit: 25,
+        offset: 0,
+      };
+      const mockFetch = makeFetch(200, payload);
+      vi.stubGlobal("fetch", mockFetch);
+
+      const result = await client.search({ q: "Search me", issues: true, wiki_pages: false });
+
+      const [url] = mockFetch.mock.calls[0] as [string];
+      expect(url).toContain("/search.json");
+      expect(url).toContain("q=Search+me");
+      expect(url).toContain("issues=1");
+      expect(url).toContain("wiki_pages=0");
       expect(result).toEqual(payload);
     });
   });

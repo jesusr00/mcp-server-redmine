@@ -6,6 +6,7 @@ import { registerIssueTools } from "./issues";
 import { registerNewsTools } from "./news";
 import { registerMyAccountTools } from "./my-account";
 import { registerProjectTools } from "./projects";
+import { registerSearchTools } from "./search";
 import { registerRoleTools } from "./roles";
 import { registerTimeEntryTools } from "./time-entries";
 import { registerUserTools } from "./users";
@@ -18,6 +19,7 @@ export function registerAllTools(server: McpServer, client: RedmineClient): void
   registerNewsTools(server, client);
   registerMyAccountTools(server, client);
   registerProjectTools(server, client);
+  registerSearchTools(server, client);
   registerRoleTools(server, client);
   registerTimeEntryTools(server, client);
   registerUserTools(server, client);

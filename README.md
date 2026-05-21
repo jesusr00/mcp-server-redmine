@@ -1,6 +1,6 @@
 # mcp-server-redmine
 
-MCP server for the Redmine REST API. Exposes 30 tools covering Issues, Issue Relations, Projects, Users, Time Entries, Wiki Pages, News, Files, and Roles via stdio transport.
+MCP server for the Redmine REST API. Exposes 30 tools covering Issues, Issue Relations, Projects, Users, Time Entries, Wiki Pages, News, Files, My Account, and Search via stdio transport.
 
 ## Installation
 
@@ -85,10 +85,10 @@ Or add manually to `.mcp.json` at the root of your project:
 
 | Tool                            | Status | Description                                                                     |
 | ------------------------------- | ------ | ------------------------------------------------------------------------------- |
-| `redmine_list_issue_relations`  | ✓      | List all relations for a given issue                                            |
-| `redmine_get_issue_relation`    | ✓      | Get a single relation by its numeric ID                                         |
-| `redmine_create_issue_relation` | ✓      | Create a relation between two issues (relates, blocks, precedes, duplicates, …) |
-| `redmine_delete_issue_relation` | ✓      | Permanently delete a relation                                                   |
+| `list_issue_relations`          | ⚠      | List all relations for a given Redmine issue                                    |
+| `get_issue_relation`            | ⚠      | Get a single relation by its numeric ID                                         |
+| `create_issue_relation`         | ⚠      | Create a relation between two issues (relates, blocks, precedes, duplicates, …) |
+| `delete_issue_relation`         | ⚠      | Permanently delete a relation                                                   |
 
 ### Projects
 
@@ -106,6 +106,12 @@ Or add manually to `.mcp.json` at the root of your project:
 | `redmine_list_users`       | ✓      | List users (requires admin privileges) |
 | `redmine_get_user`         | ✓      | Get a user by numeric ID               |
 | `redmine_get_current_user` | ✓      | Get the authenticated user's profile   |
+
+### My Account
+
+| Tool                     | Status | Description                                                              |
+| ------------------------ | ------ | ------------------------------------------------------------------------ |
+| `redmine_get_my_account` | ⚠      | Get the authenticated user's account details, API key, and custom fields |
 
 ### Time Entries
 
@@ -139,12 +145,11 @@ Or add manually to `.mcp.json` at the root of your project:
 | `redmine_list_files`  | ⚠      | List all files in a project with metadata |
 | `redmine_upload_file` | ⚠      | Upload a file to a project                |
 
-### Roles
+### Search
 
-| Tool                 | Status | Description                            |
-| -------------------- | ------ | -------------------------------------- |
-| `redmine_list_roles` | ⚠      | List all roles with IDs and names      |
-| `redmine_get_role`   | ⚠      | Get role details including permissions |
+| Tool             | Status | Description                                                                    |
+| ---------------- | ------ | ------------------------------------------------------------------------------ |
+| `redmine_search` | ⚠      | Search issues, wiki pages, news, documents, changesets, messages, and projects |
 
 ### Issues Relations
 
