@@ -1,19 +1,14 @@
 import { describe, expect, it } from "vitest";
-import {
-  ListIssuesSchema,
-  CreateIssueSchema,
-  UpdateIssueSchema,
-  GetIssueSchema,
-} from "./issues/schema";
-import { GetProjectSchema, CreateProjectSchema, ListProjectsSchema } from "./projects/schema";
+import { ListIssuesSchema, CreateIssueSchema } from "./issues/schema";
+import { GetProjectSchema } from "./projects/schema";
 import {
   ListWikiPagesSchema,
   GetWikiPageSchema,
   UpdateWikiPageSchema,
   DeleteWikiPageSchema,
 } from "./wiki-pages/schema";
-import { LogTimeSchema, ListTimeEntriesSchema } from "./time-entries/schema";
-import { GetUserSchema, ListUsersSchema } from "./users/schema";
+import { LogTimeSchema } from "./time-entries/schema";
+import { SearchSchema } from "./search/schema";
 
 describe("Schema security validations", () => {
   describe("path traversal prevention", () => {
@@ -81,7 +76,9 @@ describe("Schema security validations", () => {
   describe("sort parameter validation", () => {
     it("accepts valid sort values", () => {
       expect(ListIssuesSchema.safeParse({ sort: "updated_on:desc" }).success).toBe(true);
-      expect(ListIssuesSchema.safeParse({ sort: "priority:asc,updated_on:desc" }).success).toBe(true);
+      expect(ListIssuesSchema.safeParse({ sort: "priority:asc,updated_on:desc" }).success).toBe(
+        true
+      );
       expect(ListIssuesSchema.safeParse({ sort: "id" }).success).toBe(true);
     });
 
@@ -119,13 +116,25 @@ describe("Schema security validations", () => {
 
   describe("date format validation", () => {
     it("accepts valid ISO dates", () => {
-      expect(CreateIssueSchema.safeParse({ project_id: "test", subject: "x", start_date: "2026-01-15" }).success).toBe(true);
+      expect(
+        CreateIssueSchema.safeParse({ project_id: "test", subject: "x", start_date: "2026-01-15" })
+          .success
+      ).toBe(true);
     });
 
     it("rejects invalid date formats", () => {
-      expect(CreateIssueSchema.safeParse({ project_id: "test", subject: "x", start_date: "not-a-date" }).success).toBe(false);
-      expect(CreateIssueSchema.safeParse({ project_id: "test", subject: "x", start_date: "2026/01/15" }).success).toBe(false);
-      expect(CreateIssueSchema.safeParse({ project_id: "test", subject: "x", start_date: "15-01-2026" }).success).toBe(false);
+      expect(
+        CreateIssueSchema.safeParse({ project_id: "test", subject: "x", start_date: "not-a-date" })
+          .success
+      ).toBe(false);
+      expect(
+        CreateIssueSchema.safeParse({ project_id: "test", subject: "x", start_date: "2026/01/15" })
+          .success
+      ).toBe(false);
+      expect(
+        CreateIssueSchema.safeParse({ project_id: "test", subject: "x", start_date: "15-01-2026" })
+          .success
+      ).toBe(false);
     });
   });
 
@@ -154,6 +163,29 @@ describe("Schema security validations", () => {
         text: "a".repeat(500001),
       });
       expect(result.success).toBe(false);
+    });
+
+    it("rejects overly long search queries", () => {
+      const result = SearchSchema.safeParse({ q: "a".repeat(1001) });
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe("search parameter validation", () => {
+    it("accepts valid search filters", () => {
+      const result = SearchSchema.safeParse({
+        q: "release notes",
+        issues: true,
+        wiki_pages: true,
+        attachments: "only",
+        scope: "all",
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("rejects invalid search scope and attachment mode", () => {
+      expect(SearchSchema.safeParse({ q: "x", scope: "../admin" }).success).toBe(false);
+      expect(SearchSchema.safeParse({ q: "x", attachments: "everything" }).success).toBe(false);
     });
   });
 });

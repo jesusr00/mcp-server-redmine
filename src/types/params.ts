@@ -125,6 +125,24 @@ export interface ListNewsParams {
   offset?: number;
 }
 
+export interface SearchParams {
+  q: string;
+  offset?: number;
+  limit?: number;
+  scope?: "all" | "my_project" | "subprojects";
+  all_words?: boolean;
+  titles_only?: boolean;
+  issues?: boolean;
+  news?: boolean;
+  documents?: boolean;
+  changesets?: boolean;
+  wiki_pages?: boolean;
+  messages?: boolean;
+  projects?: boolean;
+  open_issues?: boolean;
+  attachments?: "0" | "1" | "only";
+}
+
 export interface ListIssueRelationsParams {
   issue_id: number;
 }
