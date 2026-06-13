@@ -1,0 +1,28 @@
+name: Feature Request
+description: Suggest a new tool or improvement
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Motivation
+      description: What are you trying to do, and why is it hard or impossible today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe the tool or change you'd like. If it maps to a Redmine REST endpoint, link the docs.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any workarounds or alternative approaches you've thought about.
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Anything else that helps explain the request.

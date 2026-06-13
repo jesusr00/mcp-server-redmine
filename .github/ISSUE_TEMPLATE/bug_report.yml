@@ -1,0 +1,68 @@
+name: Bug Report
+description: Report a problem with the Redmine MCP server
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report!
+
+        **Do not include real API keys, hostnames, or issue data.** Redact anything sensitive.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Which tool was called, with what arguments, and what happened.
+      placeholder: |
+        1. Called `redmine_list_issues` with `{ "project_id": "..." }`
+        2. Got error ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen instead.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      description: Output of `npm ls mcp-server-redmine` or the version you ran via npx.
+      placeholder: "0.3.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: client
+    attributes:
+      label: MCP client
+      options:
+        - Claude Desktop
+        - Claude Code
+        - Other (describe below)
+    validations:
+      required: true
+  - type: input
+    id: redmine-version
+    attributes:
+      label: Redmine version
+      placeholder: "5.1.x"
+  - type: input
+    id: node
+    attributes:
+      label: Node.js version
+      placeholder: "22.x"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / error output
+      description: Paste any relevant logs. Redact URLs and credentials.
+      render: shell
