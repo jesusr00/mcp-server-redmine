@@ -32,8 +32,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/jesusr00/mcp-server-redmine.git"
+    "url": "git+https://github.com/jesusr00/mcp-server-redmine.git"
   },
+  "homepage": "https://github.com/jesusr00/mcp-server-redmine#readme",
+  "bugs": {
+    "url": "https://github.com/jesusr00/mcp-server-redmine/issues"
+  },
+  "author": "Jesus Reikel Lopez Martin",
   "license": "MIT",
   "packageManager": "pnpm@10.29.2",
   "dependencies": {
