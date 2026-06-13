@@ -8,7 +8,7 @@ new tools, documentation, and tests.
 
 ### Prerequisites
 
-- **Node.js** 22 or later
+- **Node.js** 20 or later
 - **pnpm** (the project pins a version via the `packageManager` field — enable it
   with `corepack enable`)
 

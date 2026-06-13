@@ -45,6 +45,6 @@ This server talks to a Redmine instance using an API key supplied via the
 
 Security-relevant behavior (input validation, URL construction, and
 authentication header handling) is covered by automated tests in
-`src/client/security.test.ts`. See
-[`docs/security-hardening-requirements.md`](./docs/security-hardening-requirements.md)
+`src/tools/security.test.ts`. See
+[`docs/brainstorms/security-hardening-requirements.md`](./docs/brainstorms/security-hardening-requirements.md)
 for the hardening requirements that guide these tests.
