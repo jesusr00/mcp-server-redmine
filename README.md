@@ -1,6 +1,6 @@
 # mcp-server-redmine
 
-MCP server for the Redmine REST API. Exposes 30 tools covering Issues, Issue Relations, Projects, Users, Time Entries, Wiki Pages, News, Files, My Account, and Search via stdio transport.
+MCP server for the Redmine REST API. Exposes 32 tools covering Issues, Issue Relations, Projects, Users, My Account, Time Entries, Wiki Pages, News, Files, Search, and Roles via stdio transport.
 
 ## Installation
 
@@ -151,14 +151,12 @@ Or add manually to `.mcp.json` at the root of your project:
 | ---------------- | ------ | ------------------------------------------------------------------------------ |
 | `redmine_search` | ⚠      | Search issues, wiki pages, news, documents, changesets, messages, and projects |
 
-### Issues Relations
+### Roles
 
-| Tool                    | Status | Description                                                    |
-| ----------------------- | ------ | -------------------------------------------------------------- |
-| `list_issue_relations`  | ⚠      | List all relations for a given Redmine issue                   |
-| `get_issue_relation`    | ⚠      | Get a single Redmine issue relation by its numeric ID.         |
-| `create_issue_relation` | ⚠      | Create a relation between two Redmine issues.                  |
-| `delete_issue_relation` | ⚠      | Permanently delete a Redmine issue relation by its numeric ID. |
+| Tool                 | Status | Description                            |
+| -------------------- | ------ | -------------------------------------- |
+| `redmine_list_roles` | ⚠      | List all roles with IDs and names      |
+| `redmine_get_role`   | ⚠      | Get role details including permissions |
 
 ## API Stability
 
@@ -169,19 +167,6 @@ The tools follow Redmine's API resource stability levels:
 | ✓ Stable     | Feature complete, no major changes planned                                      |
 | ⚠ Alpha      | Major functionality in place, needs feedback from integrators                   |
 | ⚡ Prototype | Rough implementation, possible breaking changes. Not recommended for production |
-
-### News
-
-| Tool | Description |
-| --- | --- |
-| `redmine_list_news` | List news articles with optional project filtering |
-
-### Roles
-
-| Tool | Description |
-| --- | --- |
-| `redmine_list_roles` | List all roles with IDs and names |
-| `redmine_get_role` | Get role details including permissions |
 
 ## Development
 
@@ -202,6 +187,19 @@ pnpm test
 pnpm typecheck
 ```
 
+## Contributing
+
+Contributions are welcome! Please read the [Contributing Guide](./CONTRIBUTING.md)
+for setup instructions, the project structure, and how to add a new tool. Bug
+reports and feature requests go through the
+[issue templates](https://github.com/jesusr00/mcp-server-redmine/issues/new/choose).
+
+## Security
+
+Found a vulnerability? Please report it privately — see our
+[Security Policy](./SECURITY.md). Do not open a public issue for security
+problems.
+
 ## License
 
-MIT
+[MIT](./LICENSE) © Jesus Reikel Lopez Martin
