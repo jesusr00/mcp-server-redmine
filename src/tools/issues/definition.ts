@@ -77,6 +77,19 @@ export const CREATE_ISSUE_TOOL_DEFINITION = {
       due_date: { type: "string", description: "Due date in YYYY-MM-DD format" },
       estimated_hours: { type: "number", description: "Estimated hours" },
       done_ratio: { type: "number", description: "Completion percentage (0–100)" },
+      custom_fields: {
+        type: "array",
+        description:
+          "Custom field values to set, as [{id, value}] pairs. Use a string value; multi-select fields are not supported.",
+        items: {
+          type: "object",
+          properties: {
+            id: { type: "number", description: "Custom field numeric ID" },
+            value: { type: "string", description: "Custom field value (string only)" },
+          },
+          required: ["id", "value"],
+        },
+      },
     },
     required: ["project_id", "subject"],
   },
@@ -105,6 +118,19 @@ export const UPDATE_ISSUE_TOOL_DEFINITION = {
       estimated_hours: { type: "number", description: "New estimated hours" },
       done_ratio: { type: "number", description: "New completion percentage (0–100)" },
       notes: { type: "string", description: "Journal comment to add to the issue history" },
+      custom_fields: {
+        type: "array",
+        description:
+          "Custom field values to update, as [{id, value}] pairs. Use a string value; multi-select fields are not supported.",
+        items: {
+          type: "object",
+          properties: {
+            id: { type: "number", description: "Custom field numeric ID" },
+            value: { type: "string", description: "Custom field value (string only)" },
+          },
+          required: ["id", "value"],
+        },
+      },
     },
     required: ["id"],
   },

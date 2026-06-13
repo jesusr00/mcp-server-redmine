@@ -10,3 +10,7 @@ export const safeInclude = z
   .string()
   .regex(/^[a-z_]+(,[a-z_]+)*$/)
   .max(200);
+export const CustomFieldSchema = z.object({
+  id: z.number().int().positive(),
+  value: z.string().max(100000),
+});

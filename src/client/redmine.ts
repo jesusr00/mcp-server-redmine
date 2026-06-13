@@ -44,6 +44,21 @@ export class RedmineClient {
     return encodeURIComponent(String(id));
   }
 
+  private static parseRedmineErrors(text: string): string | null {
+    try {
+      const body = JSON.parse(text) as { errors?: unknown };
+      const { errors } = body;
+      if (Array.isArray(errors) && errors.length > 0) {
+        // intentionally drop non-string items — structured objects may leak proxy/middleware internals
+        const messages = errors.filter((e): e is string => typeof e === "string");
+        return messages.length > 0 ? messages.join(", ") : null;
+      }
+    } catch {
+      // not JSON or wrong shape
+    }
+    return null;
+  }
+
   private static sanitizeResponse<T>(data: unknown): T {
     if (data === null || typeof data !== "object") return data as T;
     const clean: Record<string, unknown> = {};
@@ -84,6 +99,10 @@ export class RedmineClient {
     if (!response.ok) {
       const text = await response.text();
       console.error(`Redmine API error ${response.status} ${method} ${path}: ${text}`);
+      if (response.status < 500) {
+        const detail = RedmineClient.parseRedmineErrors(text);
+        if (detail) throw new Error(`Redmine validation errors: ${detail}`);
+      }
       throw new Error(`Redmine API error: ${response.status}`);
     }
 

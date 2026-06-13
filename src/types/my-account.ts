@@ -1,7 +1,7 @@
-export interface MyAccountCustomField {
-  id: number;
+import type { CustomField } from "./params";
+
+export interface MyAccountCustomField extends CustomField {
   name: string;
-  value: string;
 }
 
 export interface MyAccount {
