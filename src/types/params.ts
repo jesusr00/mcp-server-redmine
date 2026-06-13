@@ -39,6 +39,11 @@ export interface ListTimeEntriesParams {
   offset?: number;
 }
 
+export interface CustomField {
+  id: number;
+  value: string;
+}
+
 export interface CreateIssueParams {
   project_id: string | number;
   subject: string;
@@ -52,6 +57,7 @@ export interface CreateIssueParams {
   due_date?: string;
   estimated_hours?: number;
   done_ratio?: number;
+  custom_fields?: CustomField[];
 }
 
 export interface UpdateIssueParams {
@@ -67,6 +73,7 @@ export interface UpdateIssueParams {
   estimated_hours?: number;
   done_ratio?: number;
   notes?: string;
+  custom_fields?: CustomField[];
 }
 
 export interface CreateProjectParams {

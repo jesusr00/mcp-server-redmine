@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ListIssuesSchema, CreateIssueSchema } from "./issues/schema";
+import { ListIssuesSchema, CreateIssueSchema, UpdateIssueSchema } from "./issues/schema";
 import { GetProjectSchema } from "./projects/schema";
 import {
   ListWikiPagesSchema,
@@ -272,5 +272,44 @@ describe("ZodError handling in handlers", () => {
     const result = await handleGetProject({ id: "../../admin" }, mockClient);
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain("Invalid input");
+  });
+});
+
+describe("custom_fields schema validation", () => {
+  it("accepts valid custom_fields in CreateIssueSchema", () => {
+    const result = CreateIssueSchema.safeParse({
+      project_id: "myproject",
+      subject: "Bug report",
+      custom_fields: [{ id: 18, value: "Develop" }],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts valid custom_fields in UpdateIssueSchema", () => {
+    const result = UpdateIssueSchema.safeParse({
+      id: 1,
+      custom_fields: [{ id: 18, value: "Production" }],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects custom_fields with non-positive id", () => {
+    for (const id of [0, -1]) {
+      const result = CreateIssueSchema.safeParse({
+        project_id: "myproject",
+        subject: "Bug",
+        custom_fields: [{ id, value: "Develop" }],
+      });
+      expect(result.success, `Should reject id: ${id}`).toBe(false);
+    }
+  });
+
+  it("rejects custom_fields with value exceeding max length", () => {
+    const result = CreateIssueSchema.safeParse({
+      project_id: "myproject",
+      subject: "Bug",
+      custom_fields: [{ id: 18, value: "a".repeat(100001) }],
+    });
+    expect(result.success).toBe(false);
   });
 });

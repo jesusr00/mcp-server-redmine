@@ -114,6 +114,26 @@ describe("RedmineClient", () => {
         issue: { project_id: "myproject", subject: "Child", parent_issue_id: 42 },
       });
     });
+
+    it("forwards custom_fields to the request body", async () => {
+      const mockFetch = makeFetch(201, { issue: { id: 101 } });
+      vi.stubGlobal("fetch", mockFetch);
+
+      await client.createIssue({
+        project_id: "myproject",
+        subject: "With CF",
+        custom_fields: [{ id: 3, value: "production" }],
+      });
+
+      const [, options] = mockFetch.mock.calls[0] as [string, RequestInit];
+      expect(JSON.parse(options.body as string)).toEqual({
+        issue: {
+          project_id: "myproject",
+          subject: "With CF",
+          custom_fields: [{ id: 3, value: "production" }],
+        },
+      });
+    });
   });
 
   describe("updateIssue", () => {
@@ -136,6 +156,18 @@ describe("RedmineClient", () => {
         issue: { parent_issue_id: 3 },
       });
     });
+
+    it("forwards custom_fields to the request body", async () => {
+      const mockFetch = makeFetch(200, null);
+      vi.stubGlobal("fetch", mockFetch);
+
+      await client.updateIssue(5, { custom_fields: [{ id: 7, value: "urgent" }] });
+
+      const [, options] = mockFetch.mock.calls[0] as [string, RequestInit];
+      expect(JSON.parse(options.body as string)).toEqual({
+        issue: { custom_fields: [{ id: 7, value: "urgent" }] },
+      });
+    });
   });
 
   describe("deleteIssue", () => {
@@ -152,7 +184,7 @@ describe("RedmineClient", () => {
   });
 
   describe("error handling", () => {
-    it("throws with status and body on non-ok response", async () => {
+    it("throws with status code only, not response body", async () => {
       vi.stubGlobal("fetch", makeFetch(404, "Not Found"));
 
       await expect(client.getIssue(999)).rejects.toThrow("Redmine API error: 404");
@@ -162,6 +194,66 @@ describe("RedmineClient", () => {
       vi.stubGlobal("fetch", makeFetch(401, "Unauthorized"));
 
       await expect(client.listIssues({})).rejects.toThrow("Redmine API error: 401");
+    });
+
+    it("throws readable validation errors on 422 with errors array", async () => {
+      vi.stubGlobal(
+        "fetch",
+        makeFetch(422, { errors: ["Environment can't be blank", "Tracker is invalid"] })
+      );
+
+      await expect(client.createIssue({ project_id: "myproject", subject: "Bug" })).rejects.toThrow(
+        "Redmine validation errors: Environment can't be blank, Tracker is invalid"
+      );
+    });
+
+    it("falls back to generic error on 422 with non-JSON body", async () => {
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({
+          ok: false,
+          status: 422,
+          text: async () => "Unprocessable Entity",
+        })
+      );
+
+      await expect(client.createIssue({ project_id: "myproject", subject: "Bug" })).rejects.toThrow(
+        "Redmine API error: 422"
+      );
+    });
+
+    it("falls back to generic error on 422 with empty errors array", async () => {
+      vi.stubGlobal("fetch", makeFetch(422, { errors: [] }));
+
+      await expect(client.createIssue({ project_id: "myproject", subject: "Bug" })).rejects.toThrow(
+        "Redmine API error: 422"
+      );
+    });
+
+    it("falls back to generic error on 422 with object errors array", async () => {
+      vi.stubGlobal(
+        "fetch",
+        makeFetch(422, { errors: [{ attribute: "environment", message: "can't be blank" }] })
+      );
+
+      await expect(client.createIssue({ project_id: "myproject", subject: "Bug" })).rejects.toThrow(
+        "Redmine API error: 422"
+      );
+    });
+
+    it("surfaces errors[] detail on 4xx (400, 403)", async () => {
+      for (const status of [400, 403]) {
+        vi.stubGlobal("fetch", makeFetch(status, { errors: ["You are not authorized"] }));
+        await expect(client.listIssues({})).rejects.toThrow(
+          "Redmine validation errors: You are not authorized"
+        );
+      }
+    });
+
+    it("does not surface errors[] from 5xx to prevent internal detail leak", async () => {
+      vi.stubGlobal("fetch", makeFetch(500, { errors: ["pg_internal_error at line 42"] }));
+
+      await expect(client.listIssues({})).rejects.toThrow("Redmine API error: 500");
     });
   });
 
