@@ -14,7 +14,9 @@ export const handleGetUser = withErrorHandling(async (args: unknown, client: Red
   return ok(data);
 });
 
-export const handleGetCurrentUser = withErrorHandling(async (_args: unknown, client: RedmineClient) => {
-  const data = await client.getCurrentUser();
-  return ok(data);
-});
+export const handleGetCurrentUser = withErrorHandling(
+  async (_args: unknown, client: RedmineClient) => {
+    const data = await client.getCurrentUser();
+    return ok(data);
+  }
+);

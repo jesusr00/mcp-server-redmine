@@ -13,7 +13,11 @@ export const GetProjectSchema = z.object({
 
 export const CreateProjectSchema = z.object({
   name: z.string().min(1).max(255),
-  identifier: z.string().min(1).max(255).regex(/^[a-z0-9_-]+$/),
+  identifier: z
+    .string()
+    .min(1)
+    .max(255)
+    .regex(/^[a-z0-9_-]+$/),
   description: z.string().max(100000).optional(),
   is_public: z.boolean().optional(),
   inherit_members: z.boolean().optional(),

@@ -8,17 +8,21 @@ import {
   UpdateTimeEntrySchema,
 } from "./schema";
 
-export const handleListTimeEntries = withErrorHandling(async (args: unknown, client: RedmineClient) => {
-  const params = ListTimeEntriesSchema.parse(args);
-  const data = await client.listTimeEntries(params);
-  return ok(data);
-});
+export const handleListTimeEntries = withErrorHandling(
+  async (args: unknown, client: RedmineClient) => {
+    const params = ListTimeEntriesSchema.parse(args);
+    const data = await client.listTimeEntries(params);
+    return ok(data);
+  }
+);
 
-export const handleGetTimeEntry = withErrorHandling(async (args: unknown, client: RedmineClient) => {
-  const { id } = GetTimeEntrySchema.parse(args);
-  const data = await client.getTimeEntry(id);
-  return ok(data);
-});
+export const handleGetTimeEntry = withErrorHandling(
+  async (args: unknown, client: RedmineClient) => {
+    const { id } = GetTimeEntrySchema.parse(args);
+    const data = await client.getTimeEntry(id);
+    return ok(data);
+  }
+);
 
 export const handleLogTime = withErrorHandling(async (args: unknown, client: RedmineClient) => {
   const params = LogTimeSchema.parse(args);
@@ -29,14 +33,18 @@ export const handleLogTime = withErrorHandling(async (args: unknown, client: Red
   return ok(data);
 });
 
-export const handleUpdateTimeEntry = withErrorHandling(async (args: unknown, client: RedmineClient) => {
-  const { id, ...params } = UpdateTimeEntrySchema.parse(args);
-  await client.updateTimeEntry(id, params);
-  return ok({ success: true, message: `Time entry #${id} updated successfully.` });
-});
+export const handleUpdateTimeEntry = withErrorHandling(
+  async (args: unknown, client: RedmineClient) => {
+    const { id, ...params } = UpdateTimeEntrySchema.parse(args);
+    await client.updateTimeEntry(id, params);
+    return ok({ success: true, message: `Time entry #${id} updated successfully.` });
+  }
+);
 
-export const handleDeleteTimeEntry = withErrorHandling(async (args: unknown, client: RedmineClient) => {
-  const { id } = DeleteTimeEntrySchema.parse(args);
-  await client.deleteTimeEntry(id);
-  return ok({ success: true, message: `Time entry #${id} deleted.` });
-});
+export const handleDeleteTimeEntry = withErrorHandling(
+  async (args: unknown, client: RedmineClient) => {
+    const { id } = DeleteTimeEntrySchema.parse(args);
+    await client.deleteTimeEntry(id);
+    return ok({ success: true, message: `Time entry #${id} deleted.` });
+  }
+);

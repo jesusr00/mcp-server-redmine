@@ -2,8 +2,14 @@ import { z } from "zod";
 import { safeId, isoDate, safeSort, safeInclude } from "../common-schemas";
 
 export const ListIssuesSchema = z.object({
-  project_id: z.string().regex(/^[a-zA-Z0-9_-]+$/).optional(),
-  status_id: z.string().regex(/^(\*|open|closed|[0-9]+)$/).optional(),
+  project_id: z
+    .string()
+    .regex(/^[a-zA-Z0-9_-]+$/)
+    .optional(),
+  status_id: z
+    .string()
+    .regex(/^(\*|open|closed|[0-9]+)$/)
+    .optional(),
   tracker_id: z.number().int().positive().optional(),
   assigned_to_id: z.number().int().positive().optional(),
   priority_id: z.number().int().positive().optional(),
@@ -52,4 +58,3 @@ export const UpdateIssueSchema = z.object({
 export const DeleteIssueSchema = z.object({
   id: z.number().int().positive(),
 });
-

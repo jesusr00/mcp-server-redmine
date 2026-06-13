@@ -83,12 +83,12 @@ Or add manually to `.mcp.json` at the root of your project:
 
 ### Issue Relations
 
-| Tool                            | Status | Description                                                                     |
-| ------------------------------- | ------ | ------------------------------------------------------------------------------- |
-| `list_issue_relations`          | ⚠      | List all relations for a given Redmine issue                                    |
-| `get_issue_relation`            | ⚠      | Get a single relation by its numeric ID                                         |
-| `create_issue_relation`         | ⚠      | Create a relation between two issues (relates, blocks, precedes, duplicates, …) |
-| `delete_issue_relation`         | ⚠      | Permanently delete a relation                                                   |
+| Tool                    | Status | Description                                                                     |
+| ----------------------- | ------ | ------------------------------------------------------------------------------- |
+| `list_issue_relations`  | ⚠      | List all relations for a given Redmine issue                                    |
+| `get_issue_relation`    | ⚠      | Get a single relation by its numeric ID                                         |
+| `create_issue_relation` | ⚠      | Create a relation between two issues (relates, blocks, precedes, duplicates, …) |
+| `delete_issue_relation` | ⚠      | Permanently delete a relation                                                   |
 
 ### Projects
 

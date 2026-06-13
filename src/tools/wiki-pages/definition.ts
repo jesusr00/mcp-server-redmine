@@ -15,7 +15,8 @@ export const LIST_WIKI_PAGES_TOOL_DEFINITION = {
 
 export const GET_WIKI_PAGE_TOOL_DEFINITION = {
   name: "redmine_get_wiki_page",
-  description: "[Alpha] Get the content and metadata of a Redmine wiki page by project and page title.",
+  description:
+    "[Alpha] Get the content and metadata of a Redmine wiki page by project and page title.",
   inputSchema: {
     type: "object",
     properties: {
