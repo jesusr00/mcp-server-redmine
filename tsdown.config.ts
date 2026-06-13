@@ -15,12 +15,7 @@ export default defineConfig({
   target: "es2020",
   platform: "node",
   deps: {
-    alwaysBundle: [
-      "@modelcontextprotocol/sdk",
-      "@modelcontextprotocol/sdk/**",
-      "zod",
-      "zod/**",
-    ],
+    alwaysBundle: ["@modelcontextprotocol/sdk", "@modelcontextprotocol/sdk/**", "zod", "zod/**"],
     onlyBundle: false,
   },
   banner: "#!/usr/bin/env node",

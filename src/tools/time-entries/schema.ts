@@ -2,7 +2,10 @@ import { z } from "zod";
 import { safeId, isoDate } from "../common-schemas";
 
 export const ListTimeEntriesSchema = z.object({
-  project_id: z.string().regex(/^[a-zA-Z0-9_-]+$/).optional(),
+  project_id: z
+    .string()
+    .regex(/^[a-zA-Z0-9_-]+$/)
+    .optional(),
   issue_id: z.number().int().positive().optional(),
   user_id: z.number().int().positive().optional(),
   from: isoDate.optional(),

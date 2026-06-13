@@ -1,6 +1,7 @@
 export const LIST_ISSUES_TOOL_DEFINITION = {
   name: "redmine_list_issues",
-  description: "[Stable] List Redmine issues with optional filters. Returns paginated results with issue ID, subject, status, priority, and assignee. Use this to browse or search for issues before fetching details.",
+  description:
+    "[Stable] List Redmine issues with optional filters. Returns paginated results with issue ID, subject, status, priority, and assignee. Use this to browse or search for issues before fetching details.",
   inputSchema: {
     type: "object",
     properties: {
@@ -47,7 +48,8 @@ export const GET_ISSUE_TOOL_DEFINITION = {
 
 export const CREATE_ISSUE_TOOL_DEFINITION = {
   name: "redmine_create_issue",
-  description: "[Stable] Create a new Redmine issue. Returns the created issue with its assigned ID.",
+  description:
+    "[Stable] Create a new Redmine issue. Returns the created issue with its assigned ID.",
   inputSchema: {
     type: "object",
     properties: {
@@ -96,8 +98,7 @@ export const UPDATE_ISSUE_TOOL_DEFINITION = {
       assigned_to_id: { type: "number", description: "New assignee user numeric ID" },
       parent_issue_id: {
         type: "number",
-        description:
-          "Re-parent this issue under the given numeric issue ID (makes it a subtask)",
+        description: "Re-parent this issue under the given numeric issue ID (makes it a subtask)",
       },
       start_date: { type: "string", description: "New start date (YYYY-MM-DD)" },
       due_date: { type: "string", description: "New due date (YYYY-MM-DD)" },

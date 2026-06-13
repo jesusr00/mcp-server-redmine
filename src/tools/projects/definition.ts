@@ -1,6 +1,7 @@
 export const LIST_PROJECTS_TOOL_DEFINITION = {
   name: "redmine_list_projects",
-  description: "[Stable] List all Redmine projects the API user has access to, with pagination support.",
+  description:
+    "[Stable] List all Redmine projects the API user has access to, with pagination support.",
   inputSchema: {
     type: "object",
     properties: {

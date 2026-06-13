@@ -39,14 +39,14 @@ export REDMINE_API_KEY="your-api-key"
 
 ## Development Workflow
 
-| Command          | What it does                          |
-| ---------------- | ------------------------------------- |
-| `pnpm build`     | Bundle the server with tsdown         |
-| `pnpm dev`       | Build in watch mode                   |
-| `pnpm test`      | Run the test suite (Vitest)           |
-| `pnpm typecheck` | Type-check without emitting           |
-| `pnpm lint`      | Lint with ESLint (zero warnings)      |
-| `pnpm format`    | Format the codebase with Prettier     |
+| Command          | What it does                      |
+| ---------------- | --------------------------------- |
+| `pnpm build`     | Bundle the server with tsdown     |
+| `pnpm dev`       | Build in watch mode               |
+| `pnpm test`      | Run the test suite (Vitest)       |
+| `pnpm typecheck` | Type-check without emitting       |
+| `pnpm lint`      | Lint with ESLint (zero warnings)  |
+| `pnpm format`    | Format the codebase with Prettier |
 
 Before opening a pull request, make sure all four checks pass locally — they are
 the same checks CI runs:
