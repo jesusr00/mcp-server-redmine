@@ -14,3 +14,17 @@ export const CustomFieldSchema = z.object({
   id: z.number().int().positive(),
   value: z.string().max(100000),
 });
+export const mimeType = z
+  .string()
+  .regex(/^[\w.+-]+\/[\w.+-]+$/, "must be a valid MIME type")
+  .max(255);
+export const UploadRefSchema = z.object({
+  token: z.string().min(1).max(255),
+  filename: z
+    .string()
+    .min(1)
+    .max(255)
+    .regex(/^[^\0]+$/, "must not contain null bytes"),
+  content_type: mimeType.optional(),
+  description: z.string().max(10000).optional(),
+});

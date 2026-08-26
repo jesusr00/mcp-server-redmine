@@ -1,4 +1,4 @@
-import type { FileItem } from "@/types/files";
+import type { AttachmentUpload, FileItem } from "@/types/files";
 import type { IssueRelation } from "@/types/issue-relations";
 import type { Issue } from "@/types/issues";
 import type { NewsItem } from "@/types/news";
@@ -31,6 +31,10 @@ import type {
 } from "@/types/params";
 
 export class RedmineClient {
+  private static readonly REQUEST_TIMEOUT_MS = 30_000;
+  // raw binary uploads move far more bytes than the JSON endpoints, so they get a wider window
+  private static readonly UPLOAD_TIMEOUT_MS = 300_000;
+
   private readonly headers: Record<string, string>;
 
   constructor(private readonly config: RedmineConfig) {
@@ -93,9 +97,13 @@ export class RedmineClient {
       method,
       headers: this.headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
-      signal: AbortSignal.timeout(30_000),
+      signal: AbortSignal.timeout(RedmineClient.REQUEST_TIMEOUT_MS),
     });
 
+    return this.handleResponse<T>(method, path, response);
+  }
+
+  private async handleResponse<T>(method: string, path: string, response: Response): Promise<T> {
     if (!response.ok) {
       const text = await response.text();
       console.error(`Redmine API error ${response.status} ${method} ${path}: ${text}`);
@@ -323,6 +331,24 @@ export class RedmineClient {
     return this.request("POST", `/projects/${RedmineClient.encodePath(projectId)}/files.json`, {
       file: params,
     });
+  }
+
+  async uploadAttachment(
+    filename: string,
+    content: Uint8Array
+  ): Promise<{ upload: AttachmentUpload }> {
+    // cannot go through request(): the upload endpoint needs a raw binary body,
+    // not the JSON headers/stringify the shared path applies
+    const url = new URL(`${this.config.baseUrl}/uploads.json`);
+    url.searchParams.set("filename", filename);
+    const response = await fetch(url.toString(), {
+      method: "POST",
+      headers: { ...this.headers, "Content-Type": "application/octet-stream" },
+      // TS 5.7+ types Uint8Array as Uint8Array<ArrayBufferLike>, which lib.dom's BodyInit rejects
+      body: content as BodyInit,
+      signal: AbortSignal.timeout(RedmineClient.UPLOAD_TIMEOUT_MS),
+    });
+    return this.handleResponse("POST", "/uploads.json", response);
   }
 
   // Roles

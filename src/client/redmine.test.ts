@@ -134,6 +134,26 @@ describe("RedmineClient", () => {
         },
       });
     });
+
+    it("forwards uploads to the request body", async () => {
+      const mockFetch = makeFetch(201, { issue: { id: 102 } });
+      vi.stubGlobal("fetch", mockFetch);
+
+      await client.createIssue({
+        project_id: "myproject",
+        subject: "With attachment",
+        uploads: [{ token: "7.ed1cc661", filename: "evidence.png", content_type: "image/png" }],
+      });
+
+      const [, options] = mockFetch.mock.calls[0] as [string, RequestInit];
+      expect(JSON.parse(options.body as string)).toEqual({
+        issue: {
+          project_id: "myproject",
+          subject: "With attachment",
+          uploads: [{ token: "7.ed1cc661", filename: "evidence.png", content_type: "image/png" }],
+        },
+      });
+    });
   });
 
   describe("updateIssue", () => {
@@ -350,6 +370,57 @@ describe("RedmineClient", () => {
       expect(JSON.parse(options.body as string)).toEqual({
         time_entry: { hours: 2.5, activity_id: 9, issue_id: 42 },
       });
+    });
+  });
+
+  describe("uploadAttachment", () => {
+    it("POSTs raw bytes to /uploads.json with octet-stream content type", async () => {
+      const payload = { upload: { id: 7, token: "7.ed1cc661" } };
+      const mockFetch = makeFetch(201, payload);
+      vi.stubGlobal("fetch", mockFetch);
+
+      const content = new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
+      const result = await client.uploadAttachment("evidence.png", content);
+
+      const [url, options] = mockFetch.mock.calls[0] as [string, RequestInit];
+      expect(url).toContain("/uploads.json");
+      expect(url).toContain("filename=evidence.png");
+      expect(options.method).toBe("POST");
+      expect((options.headers as Record<string, string>)["Content-Type"]).toBe(
+        "application/octet-stream"
+      );
+      expect((options.headers as Record<string, string>)["X-Redmine-API-Key"]).toBe(API_KEY);
+      expect(options.body).toBe(content);
+      expect(result).toEqual(payload);
+    });
+
+    it("URL-encodes the filename query param", async () => {
+      const mockFetch = makeFetch(201, { upload: { token: "t" } });
+      vi.stubGlobal("fetch", mockFetch);
+
+      await client.uploadAttachment("my evidence (1).png", new Uint8Array([1]));
+
+      const [url] = mockFetch.mock.calls[0] as [string];
+      expect(url).toContain("filename=my+evidence+%281%29.png");
+    });
+
+    it("surfaces validation errors on 422 (e.g. file too big)", async () => {
+      vi.stubGlobal(
+        "fetch",
+        makeFetch(422, { errors: ["Attachment is too big (maximum size: 5 MB)"] })
+      );
+
+      await expect(client.uploadAttachment("big.zip", new Uint8Array([1]))).rejects.toThrow(
+        "Redmine validation errors: Attachment is too big (maximum size: 5 MB)"
+      );
+    });
+
+    it("throws generic error on 500 without leaking body", async () => {
+      vi.stubGlobal("fetch", makeFetch(500, { errors: ["disk full at /var/redmine"] }));
+
+      await expect(client.uploadAttachment("a.png", new Uint8Array([1]))).rejects.toThrow(
+        "Redmine API error: 500"
+      );
     });
   });
 });

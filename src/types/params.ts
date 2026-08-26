@@ -44,6 +44,13 @@ export interface CustomField {
   value: string;
 }
 
+export interface UploadRef {
+  token: string;
+  filename: string;
+  content_type?: string;
+  description?: string;
+}
+
 export interface CreateIssueParams {
   project_id: string | number;
   subject: string;
@@ -58,6 +65,7 @@ export interface CreateIssueParams {
   estimated_hours?: number;
   done_ratio?: number;
   custom_fields?: CustomField[];
+  uploads?: UploadRef[];
 }
 
 export interface UpdateIssueParams {
@@ -74,6 +82,7 @@ export interface UpdateIssueParams {
   done_ratio?: number;
   notes?: string;
   custom_fields?: CustomField[];
+  uploads?: UploadRef[];
 }
 
 export interface CreateProjectParams {

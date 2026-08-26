@@ -1,3 +1,4 @@
+import { isAbsolute } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio";
 import { RedmineClient } from "@/client/redmine";
@@ -37,6 +38,19 @@ function validateRedmineUrl(raw: string): string {
 }
 
 const validatedUrl = validateRedmineUrl(REDMINE_URL);
+
+const REDMINE_UPLOAD_DIR = process.env["REDMINE_UPLOAD_DIR"];
+if (REDMINE_UPLOAD_DIR !== undefined) {
+  if (!isAbsolute(REDMINE_UPLOAD_DIR)) {
+    console.error(
+      REDMINE_UPLOAD_DIR === ""
+        ? "Error: REDMINE_UPLOAD_DIR is set but empty; unset it or provide an absolute path"
+        : `Error: REDMINE_UPLOAD_DIR must be an absolute path, got: ${REDMINE_UPLOAD_DIR}`
+    );
+    process.exit(1);
+  }
+  console.error(`File uploads restricted to: ${REDMINE_UPLOAD_DIR}`);
+}
 
 async function main() {
   const client = new RedmineClient({ baseUrl: validatedUrl, apiKey: REDMINE_API_KEY! });

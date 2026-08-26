@@ -90,6 +90,24 @@ export const CREATE_ISSUE_TOOL_DEFINITION = {
           required: ["id", "value"],
         },
       },
+      uploads: {
+        type: "array",
+        description:
+          "Files to attach, as [{token, filename}] entries. Get each token from redmine_upload_attachment first. Max 10 entries.",
+        items: {
+          type: "object",
+          properties: {
+            token: { type: "string", description: "Upload token from redmine_upload_attachment" },
+            filename: {
+              type: "string",
+              description: "Filename for the attachment shown on the issue",
+            },
+            content_type: { type: "string", description: "MIME type, e.g. 'image/png'" },
+            description: { type: "string", description: "Attachment description" },
+          },
+          required: ["token", "filename"],
+        },
+      },
     },
     required: ["project_id", "subject"],
   },
@@ -129,6 +147,24 @@ export const UPDATE_ISSUE_TOOL_DEFINITION = {
             value: { type: "string", description: "Custom field value (string only)" },
           },
           required: ["id", "value"],
+        },
+      },
+      uploads: {
+        type: "array",
+        description:
+          "Files to attach, as [{token, filename}] entries. Get each token from redmine_upload_attachment first. Max 10 entries.",
+        items: {
+          type: "object",
+          properties: {
+            token: { type: "string", description: "Upload token from redmine_upload_attachment" },
+            filename: {
+              type: "string",
+              description: "Filename for the attachment shown on the issue",
+            },
+            content_type: { type: "string", description: "MIME type, e.g. 'image/png'" },
+            description: { type: "string", description: "Attachment description" },
+          },
+          required: ["token", "filename"],
         },
       },
     },

@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { safeId, isoDate, safeSort, safeInclude, CustomFieldSchema } from "../common-schemas";
+import {
+  safeId,
+  isoDate,
+  safeSort,
+  safeInclude,
+  CustomFieldSchema,
+  UploadRefSchema,
+} from "../common-schemas";
 
 export const ListIssuesSchema = z.object({
   project_id: z
@@ -38,6 +45,7 @@ export const CreateIssueSchema = z.object({
   estimated_hours: z.number().positive().optional(),
   done_ratio: z.number().int().min(0).max(100).optional(),
   custom_fields: z.array(CustomFieldSchema).max(100).optional(),
+  uploads: z.array(UploadRefSchema).max(10).optional(),
 });
 
 export const UpdateIssueSchema = z.object({
@@ -55,6 +63,7 @@ export const UpdateIssueSchema = z.object({
   done_ratio: z.number().int().min(0).max(100).optional(),
   notes: z.string().max(100000).optional(),
   custom_fields: z.array(CustomFieldSchema).max(100).optional(),
+  uploads: z.array(UploadRefSchema).max(10).optional(),
 });
 
 export const DeleteIssueSchema = z.object({
