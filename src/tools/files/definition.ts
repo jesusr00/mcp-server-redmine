@@ -19,7 +19,7 @@ export const LIST_FILES_TOOL_DEFINITION = {
 export const UPLOAD_FILE_TOOL_DEFINITION = {
   name: "redmine_upload_file",
   description:
-    "[Alpha] Upload a file to a Redmine project. IMPORTANT: You must first upload the file using Redmine's attachment API to get a token, then use that token here to associate it with a project. See Redmine's file upload workflow for details.",
+    "[Alpha] Add an already-uploaded file to a Redmine project's Files module. First call redmine_upload_attachment to get an upload token, then pass that token here to associate the file with the project.",
   inputSchema: {
     type: "object",
     properties: {
@@ -36,5 +36,29 @@ export const UPLOAD_FILE_TOOL_DEFINITION = {
       version_id: { type: "number", description: "Project version ID to associate the file with" },
     },
     required: ["project_id", "token"],
+  },
+} as const;
+
+export const UPLOAD_ATTACHMENT_TOOL_DEFINITION = {
+  name: "redmine_upload_attachment",
+  description:
+    "[Alpha] Upload a local file to Redmine and get an attachment token. Reads the file at the given absolute path and posts its content to Redmine's attachment API. Pass the returned token in the 'uploads' array of redmine_create_issue or redmine_update_issue to attach the file to an issue, or to redmine_upload_file to add it to a project's Files module. If the server is configured with REDMINE_UPLOAD_DIR, only files inside that directory can be uploaded.",
+  inputSchema: {
+    type: "object",
+    properties: {
+      file_path: {
+        type: "string",
+        description: "Absolute path to the local file to upload (required)",
+      },
+      filename: {
+        type: "string",
+        description: "Filename to store in Redmine (defaults to the file's basename)",
+      },
+      content_type: {
+        type: "string",
+        description: "MIME type, e.g. 'image/png' (defaults to a guess from the file extension)",
+      },
+    },
+    required: ["file_path"],
   },
 } as const;

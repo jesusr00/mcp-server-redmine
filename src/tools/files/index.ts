@@ -1,8 +1,12 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
 import type { RedmineClient } from "@/client/redmine";
-import { handleListFiles, handleUploadFile } from "./files";
-import { ListFilesSchema, UploadFileSchema } from "./schema";
-import { LIST_FILES_TOOL_DEFINITION, UPLOAD_FILE_TOOL_DEFINITION } from "./definition";
+import { handleListFiles, handleUploadAttachment, handleUploadFile } from "./files";
+import { ListFilesSchema, UploadAttachmentSchema, UploadFileSchema } from "./schema";
+import {
+  LIST_FILES_TOOL_DEFINITION,
+  UPLOAD_ATTACHMENT_TOOL_DEFINITION,
+  UPLOAD_FILE_TOOL_DEFINITION,
+} from "./definition";
 
 export function registerFileTools(server: McpServer, client: RedmineClient): void {
   server.tool(
@@ -16,5 +20,11 @@ export function registerFileTools(server: McpServer, client: RedmineClient): voi
     UPLOAD_FILE_TOOL_DEFINITION.description,
     UploadFileSchema.shape,
     (args) => handleUploadFile(args, client)
+  );
+  server.tool(
+    UPLOAD_ATTACHMENT_TOOL_DEFINITION.name,
+    UPLOAD_ATTACHMENT_TOOL_DEFINITION.description,
+    UploadAttachmentSchema.shape,
+    (args) => handleUploadAttachment(args, client)
   );
 }

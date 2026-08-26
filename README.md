@@ -1,6 +1,6 @@
 # mcp-server-redmine
 
-MCP server for the Redmine REST API. Exposes 32 tools covering Issues, Issue Relations, Projects, Users, My Account, Time Entries, Wiki Pages, News, Files, Search, and Roles via stdio transport.
+MCP server for the Redmine REST API. Exposes 33 tools covering Issues, Issue Relations, Projects, Users, My Account, Time Entries, Wiki Pages, News, Files, Search, and Roles via stdio transport.
 
 ## Installation
 
@@ -16,12 +16,13 @@ npx mcp-server-redmine
 
 ## Configuration
 
-Two environment variables are required:
+Two environment variables are required, and one is optional:
 
-| Variable          | Description                                                           |
-| ----------------- | --------------------------------------------------------------------- |
-| `REDMINE_URL`     | Base URL of your Redmine instance, e.g. `https://redmine.example.com` |
-| `REDMINE_API_KEY` | Your Redmine API access key (found in _My account → API access key_)  |
+| Variable             | Description                                                                                                                                                                                                                    |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `REDMINE_URL`        | Base URL of your Redmine instance, e.g. `https://redmine.example.com`                                                                                                                                                          |
+| `REDMINE_API_KEY`    | Your Redmine API access key (found in _My account → API access key_)                                                                                                                                                           |
+| `REDMINE_UPLOAD_DIR` | Optional. Absolute path; when set, `redmine_upload_attachment` can only read files inside this directory (symlinks are resolved; hard links and bind mounts are not detected). Recommended to limit what the model can upload. |
 
 ## Claude Desktop Setup
 
@@ -77,8 +78,8 @@ Or add manually to `.mcp.json` at the root of your project:
 | ---------------------- | ------ | ---------------------------------------------------------------------------------- |
 | `redmine_list_issues`  | ✓      | List issues with filters: project, status, tracker, assignee, priority, pagination |
 | `redmine_get_issue`    | ✓      | Get a single issue by numeric ID                                                   |
-| `redmine_create_issue` | ✓      | Create a new issue in a project                                                    |
-| `redmine_update_issue` | ✓      | Update fields on an existing issue                                                 |
+| `redmine_create_issue` | ✓      | Create a new issue in a project, optionally attaching uploaded files               |
+| `redmine_update_issue` | ✓      | Update fields on an existing issue, optionally attaching uploaded files            |
 | `redmine_delete_issue` | ✓      | Permanently delete an issue                                                        |
 
 ### Issue Relations
@@ -140,10 +141,11 @@ Or add manually to `.mcp.json` at the root of your project:
 
 ### Files
 
-| Tool                  | Status | Description                               |
-| --------------------- | ------ | ----------------------------------------- |
-| `redmine_list_files`  | ⚠      | List all files in a project with metadata |
-| `redmine_upload_file` | ⚠      | Upload a file to a project                |
+| Tool                        | Status | Description                                                                 |
+| --------------------------- | ------ | --------------------------------------------------------------------------- |
+| `redmine_list_files`        | ⚠      | List all files in a project with metadata                                   |
+| `redmine_upload_attachment` | ⚠      | Upload a local file and get an attachment token for issues or project files |
+| `redmine_upload_file`       | ⚠      | Add an already-uploaded file (by token) to a project's Files module         |
 
 ### Search
 

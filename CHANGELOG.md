@@ -5,6 +5,28 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Issue attachments support** ([#18]): new `redmine_upload_attachment` tool that reads a
+  local file and posts it to Redmine's attachment API (`POST /uploads.json`), returning an
+  upload token. `redmine_create_issue` and `redmine_update_issue` now accept an `uploads`
+  array of `{ token, filename, content_type?, description? }` entries so files can be
+  attached to issues. The token also works with `redmine_upload_file` to add files to a
+  project's Files module. Up to 10 uploads per issue; local files up to 50 MB.
+
+### Security
+
+- **Optional upload directory restriction**: when the `REDMINE_UPLOAD_DIR` environment
+  variable is set to an absolute path, `redmine_upload_attachment` only reads files inside
+  that directory. Symlinks are resolved before the check, so links pointing outside the
+  directory are rejected, and missing files outside the directory are indistinguishable from
+  denied ones, so the tool cannot be used to probe the filesystem. Hard links and bind mounts
+  are not detected (path-level containment only). This limits what a (possibly
+  prompt-injected) model can exfiltrate to the Redmine server; leaving it unset preserves the
+  unrestricted behavior.
+
 ## [0.6.0] - 2026-08-25
 
 ### Added
@@ -33,3 +55,4 @@ Releases prior to 0.6.0 (up to and including [0.5.1]) predate this changelog. Se
 [0.5.1]: https://github.com/jesusr00/mcp-server-redmine/releases/tag/v0.5.1
 [#13]: https://github.com/jesusr00/mcp-server-redmine/issues/13
 [#14]: https://github.com/jesusr00/mcp-server-redmine/pull/14
+[#18]: https://github.com/jesusr00/mcp-server-redmine/issues/18

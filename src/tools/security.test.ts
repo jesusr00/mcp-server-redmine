@@ -9,6 +9,7 @@ import {
 } from "./wiki-pages/schema";
 import { LogTimeSchema } from "./time-entries/schema";
 import { SearchSchema } from "./search/schema";
+import { UploadAttachmentSchema } from "./files/schema";
 
 describe("Schema security validations", () => {
   describe("path traversal prevention", () => {
@@ -186,6 +187,79 @@ describe("Schema security validations", () => {
     it("rejects invalid search scope and attachment mode", () => {
       expect(SearchSchema.safeParse({ q: "x", scope: "../admin" }).success).toBe(false);
       expect(SearchSchema.safeParse({ q: "x", attachments: "everything" }).success).toBe(false);
+    });
+  });
+
+  describe("upload attachment path validation", () => {
+    it("accepts an absolute path", () => {
+      expect(UploadAttachmentSchema.safeParse({ file_path: "/tmp/evidence.png" }).success).toBe(
+        true
+      );
+    });
+
+    it("rejects relative paths", () => {
+      for (const p of ["evidence.png", "./evidence.png", "../secrets/key.pem"]) {
+        expect(
+          UploadAttachmentSchema.safeParse({ file_path: p }).success,
+          `Should reject "${p}"`
+        ).toBe(false);
+      }
+    });
+
+    it("rejects null bytes and empty/overlong paths", () => {
+      expect(UploadAttachmentSchema.safeParse({ file_path: "/tmp/a\0.png" }).success).toBe(false);
+      expect(UploadAttachmentSchema.safeParse({ file_path: "" }).success).toBe(false);
+      expect(UploadAttachmentSchema.safeParse({ file_path: "/" + "a".repeat(4096) }).success).toBe(
+        false
+      );
+    });
+
+    it("rejects malformed content_type", () => {
+      expect(
+        UploadAttachmentSchema.safeParse({
+          file_path: "/tmp/a.png",
+          content_type: "image/png; rm -rf /",
+        }).success
+      ).toBe(false);
+    });
+
+    it("rejects null bytes in the filename override", () => {
+      expect(
+        UploadAttachmentSchema.safeParse({
+          file_path: "/tmp/a.png",
+          filename: "evi\0dence.png",
+        }).success
+      ).toBe(false);
+    });
+  });
+
+  describe("issue uploads validation", () => {
+    const base = { project_id: "myproject", subject: "Bug" };
+
+    it("accepts valid uploads in CreateIssueSchema and UpdateIssueSchema", () => {
+      const uploads = [
+        { token: "7.ed1cc661", filename: "evidence.png", content_type: "image/png" },
+      ];
+      expect(CreateIssueSchema.safeParse({ ...base, uploads }).success).toBe(true);
+      expect(UpdateIssueSchema.safeParse({ id: 1, uploads }).success).toBe(true);
+    });
+
+    it("rejects uploads with empty token or missing filename", () => {
+      expect(
+        CreateIssueSchema.safeParse({ ...base, uploads: [{ token: "", filename: "a.png" }] })
+          .success
+      ).toBe(false);
+      expect(
+        CreateIssueSchema.safeParse({ ...base, uploads: [{ token: "7.ed1cc661" }] }).success
+      ).toBe(false);
+    });
+
+    it("rejects more than 10 uploads", () => {
+      const uploads = Array.from({ length: 11 }, (_, i) => ({
+        token: `t${i}`,
+        filename: `f${i}.png`,
+      }));
+      expect(CreateIssueSchema.safeParse({ ...base, uploads }).success).toBe(false);
     });
   });
 });

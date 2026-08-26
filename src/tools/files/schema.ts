@@ -1,5 +1,6 @@
+import { isAbsolute } from "node:path";
 import { z } from "zod";
-import { safeId } from "../common-schemas";
+import { mimeType, safeId } from "../common-schemas";
 
 export const ListFilesSchema = z.object({
   project_id: safeId,
@@ -13,4 +14,20 @@ export const UploadFileSchema = z.object({
   filename: z.string().max(255).optional(),
   description: z.string().max(10000).optional(),
   version_id: z.number().int().positive().optional(),
+});
+
+export const UploadAttachmentSchema = z.object({
+  file_path: z
+    .string()
+    .min(1)
+    .max(4096)
+    .regex(/^[^\0]+$/, "must not contain null bytes")
+    .refine((p) => isAbsolute(p), "must be an absolute path"),
+  filename: z
+    .string()
+    .min(1)
+    .max(255)
+    .regex(/^[^\0]+$/, "must not contain null bytes")
+    .optional(),
+  content_type: mimeType.optional(),
 });

@@ -1,5 +1,10 @@
 import type { IdName } from "./common";
 
+export interface AttachmentUpload {
+  id?: number;
+  token: string;
+}
+
 export interface FileItem {
   id: number;
   filename: string;
