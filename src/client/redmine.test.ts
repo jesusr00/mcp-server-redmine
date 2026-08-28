@@ -8,6 +8,7 @@ function makeFetch(status: number, body: unknown) {
   return vi.fn().mockResolvedValue({
     ok: status >= 200 && status < 300,
     status,
+    headers: { get: () => null },
     text: async () => (body !== null ? JSON.stringify(body) : ""),
   });
 }
@@ -420,6 +421,168 @@ describe("RedmineClient", () => {
 
       await expect(client.uploadAttachment("a.png", new Uint8Array([1]))).rejects.toThrow(
         "Redmine API error: 500"
+      );
+    });
+  });
+
+  describe("getAttachment", () => {
+    it("calls GET /attachments/:id.json", async () => {
+      const payload = {
+        attachment: {
+          id: 53404,
+          filename: "evidencia.png",
+          filesize: 74,
+          content_type: "image/png",
+        },
+      };
+      const mockFetch = makeFetch(200, payload);
+      vi.stubGlobal("fetch", mockFetch);
+
+      const result = await client.getAttachment(53404);
+
+      const [url] = mockFetch.mock.calls[0] as [string];
+      expect(url).toContain("/attachments/53404.json");
+      expect(result).toEqual(payload);
+    });
+  });
+
+  describe("downloadAttachment", () => {
+    const MAX = 5 * 1024 * 1024;
+
+    function makeStreamFetch(chunks: Uint8Array[], contentLength: number | null) {
+      const body = {
+        cancel: vi.fn().mockResolvedValue(undefined),
+        async *[Symbol.asyncIterator]() {
+          for (const c of chunks) yield c;
+        },
+      };
+      return vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        headers: {
+          get: (h: string) =>
+            h.toLowerCase() === "content-length" && contentLength !== null
+              ? String(contentLength)
+              : null,
+        },
+        body,
+        text: async () => "",
+      });
+    }
+
+    it("GETs the download URL with the API key and returns the raw bytes", async () => {
+      const bytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
+      const mockFetch = makeStreamFetch([bytes], bytes.length);
+      vi.stubGlobal("fetch", mockFetch);
+
+      const result = await client.downloadAttachment(53404, "mi evidencia.png", MAX);
+
+      const [url, options] = mockFetch.mock.calls[0] as [string, RequestInit];
+      expect(url).toContain("/attachments/download/53404/mi%20evidencia.png");
+      expect((options.headers as Record<string, string>)["X-Redmine-API-Key"]).toBe(API_KEY);
+      expect(Buffer.from(result)).toEqual(Buffer.from(bytes));
+    });
+
+    it("rejects before reading when Content-Length exceeds the limit", async () => {
+      const mockFetch = makeStreamFetch([new Uint8Array([1])], 10 * 1024 * 1024);
+      vi.stubGlobal("fetch", mockFetch);
+
+      await expect(client.downloadAttachment(1, "big.png", MAX)).rejects.toThrow("download limit");
+    });
+
+    it("rejects when the streamed body exceeds the limit despite a small Content-Length", async () => {
+      const chunk = new Uint8Array(3);
+      const mockFetch = makeStreamFetch([chunk, chunk, chunk], 1);
+      vi.stubGlobal("fetch", mockFetch);
+
+      await expect(client.downloadAttachment(1, "liar.png", 4)).rejects.toThrow("download limit");
+    });
+
+    function makeRedirectResponse(location: string) {
+      return {
+        ok: false,
+        status: 302,
+        headers: { get: (h: string) => (h.toLowerCase() === "location" ? location : null) },
+        body: { cancel: vi.fn().mockResolvedValue(undefined) },
+        text: async () => "",
+      };
+    }
+
+    it("drops the API key when following a cross-origin redirect", async () => {
+      const bytes = new Uint8Array([1, 2]);
+      const okResponse = {
+        ok: true,
+        status: 200,
+        headers: {
+          get: (h: string) => (h.toLowerCase() === "content-length" ? String(bytes.length) : null),
+        },
+        body: {
+          cancel: vi.fn(),
+          async *[Symbol.asyncIterator]() {
+            yield bytes;
+          },
+        },
+        text: async () => "",
+      };
+      const mockFetch = vi
+        .fn()
+        .mockResolvedValueOnce(makeRedirectResponse("https://s3.example.net/bucket/x?sig=1"))
+        .mockResolvedValueOnce(okResponse);
+      vi.stubGlobal("fetch", mockFetch);
+
+      const result = await client.downloadAttachment(7, "a.png", 1024);
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      const [redirectedUrl, redirectedInit] = mockFetch.mock.calls[1] as [string, RequestInit];
+      expect(redirectedUrl).toBe("https://s3.example.net/bucket/x?sig=1");
+      const headers = (redirectedInit.headers ?? {}) as Record<string, string>;
+      expect(headers["X-Redmine-API-Key"]).toBeUndefined();
+      expect(Buffer.from(result)).toEqual(Buffer.from(bytes));
+    });
+
+    it("keeps the API key on same-origin redirects", async () => {
+      const bytes = new Uint8Array([1]);
+      const okResponse = {
+        ok: true,
+        status: 200,
+        headers: { get: () => null },
+        body: {
+          cancel: vi.fn(),
+          async *[Symbol.asyncIterator]() {
+            yield bytes;
+          },
+        },
+        text: async () => "",
+      };
+      const mockFetch = vi
+        .fn()
+        .mockResolvedValueOnce(makeRedirectResponse("/attachments/moved/7/a.png"))
+        .mockResolvedValueOnce(okResponse);
+      vi.stubGlobal("fetch", mockFetch);
+
+      await client.downloadAttachment(7, "a.png", 1024);
+
+      const [redirectedUrl, redirectedInit] = mockFetch.mock.calls[1] as [string, RequestInit];
+      expect(redirectedUrl).toBe(`${BASE_URL}/attachments/moved/7/a.png`);
+      expect((redirectedInit.headers as Record<string, string>)["X-Redmine-API-Key"]).toBe(API_KEY);
+    });
+
+    it("gives up after too many redirects", async () => {
+      const mockFetch = vi
+        .fn()
+        .mockResolvedValue(makeRedirectResponse("https://redmine.example.com/loop"));
+      vi.stubGlobal("fetch", mockFetch);
+
+      await expect(client.downloadAttachment(7, "a.png", 1024)).rejects.toThrow(
+        "Too many redirects"
+      );
+    });
+
+    it("throws generic error on 404 without leaking body", async () => {
+      vi.stubGlobal("fetch", makeFetch(404, "Not Found"));
+
+      await expect(client.downloadAttachment(999, "x.png", MAX)).rejects.toThrow(
+        "Redmine API error: 404"
       );
     });
   });

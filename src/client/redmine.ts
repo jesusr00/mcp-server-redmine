@@ -1,4 +1,4 @@
-import type { AttachmentUpload, FileItem } from "@/types/files";
+import type { Attachment, AttachmentUpload, FileItem } from "@/types/files";
 import type { IssueRelation } from "@/types/issue-relations";
 import type { Issue } from "@/types/issues";
 import type { NewsItem } from "@/types/news";
@@ -32,8 +32,8 @@ import type {
 
 export class RedmineClient {
   private static readonly REQUEST_TIMEOUT_MS = 30_000;
-  // raw binary uploads move far more bytes than the JSON endpoints, so they get a wider window
-  private static readonly UPLOAD_TIMEOUT_MS = 300_000;
+  // raw binary transfers move far more bytes than the JSON endpoints, so they get a wider window
+  private static readonly TRANSFER_TIMEOUT_MS = 300_000;
 
   private readonly headers: Record<string, string>;
 
@@ -42,6 +42,10 @@ export class RedmineClient {
       "X-Redmine-API-Key": config.apiKey,
       "Content-Type": "application/json",
     };
+  }
+
+  get baseUrl(): string {
+    return this.config.baseUrl;
   }
 
   private static encodePath(id: string | number): string {
@@ -103,7 +107,7 @@ export class RedmineClient {
     return this.handleResponse<T>(method, path, response);
   }
 
-  private async handleResponse<T>(method: string, path: string, response: Response): Promise<T> {
+  private static async ensureOk(method: string, path: string, response: Response): Promise<void> {
     if (!response.ok) {
       const text = await response.text();
       console.error(`Redmine API error ${response.status} ${method} ${path}: ${text}`);
@@ -113,7 +117,10 @@ export class RedmineClient {
       }
       throw new Error(`Redmine API error: ${response.status}`);
     }
+  }
 
+  private async handleResponse<T>(method: string, path: string, response: Response): Promise<T> {
+    await RedmineClient.ensureOk(method, path, response);
     const text = await response.text();
     if (!text) return {} as T;
     const parsed: unknown = JSON.parse(text);
@@ -346,9 +353,64 @@ export class RedmineClient {
       headers: { ...this.headers, "Content-Type": "application/octet-stream" },
       // TS 5.7+ types Uint8Array as Uint8Array<ArrayBufferLike>, which lib.dom's BodyInit rejects
       body: content as BodyInit,
-      signal: AbortSignal.timeout(RedmineClient.UPLOAD_TIMEOUT_MS),
+      signal: AbortSignal.timeout(RedmineClient.TRANSFER_TIMEOUT_MS),
     });
     return this.handleResponse("POST", "/uploads.json", response);
+  }
+
+  async getAttachment(id: number): Promise<{ attachment: Attachment }> {
+    return this.request("GET", `/attachments/${RedmineClient.encodePath(id)}.json`);
+  }
+
+  async downloadAttachment(id: number, filename: string, maxBytes: number): Promise<Buffer> {
+    // built from the configured base URL rather than the server-provided content_url,
+    // so the API key is never sent to a host we did not configure
+    const path = `/attachments/download/${RedmineClient.encodePath(id)}/${encodeURIComponent(filename)}`;
+    const origin = new URL(this.config.baseUrl).origin;
+    let url = `${this.config.baseUrl}${path}`;
+    let withKey = true;
+    let response: Response;
+    // fetch's automatic redirects forward custom headers across origins, so redirects are
+    // followed manually and the API key is dropped whenever the target leaves our origin
+    // (external attachment storage like S3 answers with its own presigned auth anyway)
+    for (let hops = 0; ; hops++) {
+      response = await fetch(url, {
+        method: "GET",
+        headers: withKey ? this.headers : undefined,
+        redirect: "manual",
+        signal: AbortSignal.timeout(RedmineClient.TRANSFER_TIMEOUT_MS),
+      });
+      const location = response.headers.get("location");
+      if (response.status < 300 || response.status >= 400 || !location) break;
+      await response.body?.cancel().catch(() => {});
+      if (hops >= 5) {
+        throw new Error("Too many redirects while downloading the attachment.");
+      }
+      const next = new URL(location, url);
+      withKey = next.origin === origin;
+      url = next.toString();
+    }
+    await RedmineClient.ensureOk("GET", path, response);
+
+    // the declared Content-Length and the actual stream are both capped: the server's
+    // metadata (and headers) are not trusted to bound how much we buffer in memory
+    const declared = Number(response.headers.get("content-length"));
+    if (Number.isFinite(declared) && declared > maxBytes) {
+      await response.body?.cancel().catch(() => {});
+      throw new Error(`Attachment exceeds the ${maxBytes}-byte download limit.`);
+    }
+    if (!response.body) return Buffer.alloc(0);
+    const chunks: Buffer[] = [];
+    let total = 0;
+    for await (const chunk of response.body) {
+      const buf = Buffer.from(chunk as Uint8Array);
+      total += buf.length;
+      if (total > maxBytes) {
+        throw new Error(`Attachment exceeds the ${maxBytes}-byte download limit.`);
+      }
+      chunks.push(buf);
+    }
+    return Buffer.concat(chunks);
   }
 
   // Roles

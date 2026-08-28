@@ -62,3 +62,16 @@ export const UPLOAD_ATTACHMENT_TOOL_DEFINITION = {
     required: ["file_path"],
   },
 } as const;
+
+export const DOWNLOAD_ATTACHMENT_TOOL_DEFINITION = {
+  name: "redmine_download_attachment",
+  description:
+    "[Alpha] Download a Redmine attachment by its numeric ID (find IDs with redmine_get_issue using include=attachments). Raster images (png, jpeg, gif, webp) are returned as viewable image content; text files, including JSON and SVG, are returned inline (long ones truncated); other types, images over 3.5 MB, and text over 5 MB return metadata instead.",
+  inputSchema: {
+    type: "object",
+    properties: {
+      attachment_id: { type: "number", description: "Numeric attachment ID (required)" },
+    },
+    required: ["attachment_id"],
+  },
+} as const;
