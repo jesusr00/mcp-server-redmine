@@ -1,6 +1,6 @@
 # mcp-server-redmine
 
-MCP server for the Redmine REST API. Exposes 33 tools covering Issues, Issue Relations, Projects, Users, My Account, Time Entries, Wiki Pages, News, Files, Search, and Roles via stdio transport.
+MCP server for the Redmine REST API. Exposes 34 tools covering Issues, Issue Relations, Projects, Users, My Account, Time Entries, Wiki Pages, News, Files, Search, and Roles via stdio transport.
 
 ## Installation
 
@@ -141,11 +141,12 @@ Or add manually to `.mcp.json` at the root of your project:
 
 ### Files
 
-| Tool                        | Status | Description                                                                 |
-| --------------------------- | ------ | --------------------------------------------------------------------------- |
-| `redmine_list_files`        | ⚠      | List all files in a project with metadata                                   |
-| `redmine_upload_attachment` | ⚠      | Upload a local file and get an attachment token for issues or project files |
-| `redmine_upload_file`       | ⚠      | Add an already-uploaded file (by token) to a project's Files module         |
+| Tool                          | Status | Description                                                                 |
+| ----------------------------- | ------ | --------------------------------------------------------------------------- |
+| `redmine_list_files`          | ⚠      | List all files in a project with metadata                                   |
+| `redmine_upload_attachment`   | ⚠      | Upload a local file and get an attachment token for issues or project files |
+| `redmine_download_attachment` | ⚠      | Download an attachment; images and text are returned inline as context      |
+| `redmine_upload_file`         | ⚠      | Add an already-uploaded file (by token) to a project's Files module         |
 
 ### Search
 

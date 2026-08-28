@@ -5,6 +5,17 @@ export interface AttachmentUpload {
   token: string;
 }
 
+export interface Attachment {
+  id: number;
+  filename: string;
+  filesize: number;
+  content_type: string;
+  description?: string;
+  content_url: string;
+  author: IdName;
+  created_on: string;
+}
+
 export interface FileItem {
   id: number;
   filename: string;
