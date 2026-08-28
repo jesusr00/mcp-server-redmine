@@ -15,6 +15,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   array of `{ token, filename, content_type?, description? }` entries so files can be
   attached to issues. The token also works with `redmine_upload_file` to add files to a
   project's Files module. Up to 10 uploads per issue; local files up to 50 MB.
+- **Attachment download as model context**: new `redmine_download_attachment` tool that
+  fetches an attachment by ID. Raster images (png, jpeg, gif, webp) are returned as MCP
+  image content blocks so clients feed them to the model as visual context; text
+  attachments (including SVG and JSON) are returned inline, truncated beyond 100000
+  characters; other types, images over 3.5 MB (so the base64 block stays under API image
+  limits), and text over 5 MB return metadata instead. Image bytes are verified against
+  the declared type's signature before being inlined, and inlined content carries an
+  explicit untrusted-content warning. The download URL is always built from the configured
+  `REDMINE_URL`, redirects are followed manually with the API key dropped whenever the
+  target leaves the configured host, the streamed body is hard-capped regardless of what
+  the server reports, and attachment URLs from server responses are only echoed when they
+  point at the configured host — the API key is never sent or directed to a host taken
+  from a server response.
 
 ### Security
 

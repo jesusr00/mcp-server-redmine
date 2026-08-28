@@ -31,3 +31,7 @@ export const UploadAttachmentSchema = z.object({
     .optional(),
   content_type: mimeType.optional(),
 });
+
+export const DownloadAttachmentSchema = z.object({
+  attachment_id: z.number().int().positive(),
+});

@@ -336,7 +336,7 @@ describe("ZodError handling in handlers", () => {
 
     const result = await handleGetIssue({ id: "not-a-number" }, mockClient);
     expect(result.isError).toBe(true);
-    expect(result.content[0].text).toContain("Invalid input");
+    expect(result.content[0]).toMatchObject({ text: expect.stringContaining("Invalid input") });
   });
 
   it("returns clean error for path traversal attempt", async () => {
@@ -345,7 +345,7 @@ describe("ZodError handling in handlers", () => {
 
     const result = await handleGetProject({ id: "../../admin" }, mockClient);
     expect(result.isError).toBe(true);
-    expect(result.content[0].text).toContain("Invalid input");
+    expect(result.content[0]).toMatchObject({ text: expect.stringContaining("Invalid input") });
   });
 });
 
