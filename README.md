@@ -4,6 +4,11 @@ MCP server for the Redmine REST API. Exposes 34 tools covering Issues, Issue Rel
 
 ## Installation
 
+For Codex, follow [Codex Setup](#codex-setup) to register the server directly with
+`codex mcp add`. No separate package installation is required.
+
+To install the package as a project dependency:
+
 ```bash
 pnpm add mcp-server-redmine
 ```
@@ -11,7 +16,7 @@ pnpm add mcp-server-redmine
 Or use directly via npx:
 
 ```bash
-npx mcp-server-redmine
+npx -y mcp-server-redmine
 ```
 
 ## Configuration
@@ -23,6 +28,53 @@ Two environment variables are required, and one is optional:
 | `REDMINE_URL`        | Base URL of your Redmine instance, e.g. `https://redmine.example.com`                                                                                                                                                          |
 | `REDMINE_API_KEY`    | Your Redmine API access key (found in _My account → API access key_)                                                                                                                                                           |
 | `REDMINE_UPLOAD_DIR` | Optional. Absolute path; when set, `redmine_upload_attachment` can only read files inside this directory (symlinks are resolved; hard links and bind mounts are not detected). Recommended to limit what the model can upload. |
+
+## Codex Setup
+
+Make sure Node.js (including `npx`) and the Codex CLI are installed. Replace the
+Redmine URL and API key below with your own values, then run:
+
+```bash
+codex mcp add redmine \
+  --env REDMINE_URL=https://redmine.example.com \
+  --env REDMINE_API_KEY=your-api-key \
+  -- npx -y mcp-server-redmine
+```
+
+This registers the stdio server in `~/.codex/config.toml`. Codex launches it through
+`npx`, which downloads the package when needed. The `-y` flag skips the package
+installation prompt.
+
+To restrict uploads, include `--env REDMINE_UPLOAD_DIR=/absolute/path/to/uploads`
+before `-- npx` in the command above.
+
+Verify that the server is registered:
+
+```bash
+codex mcp list
+```
+
+Start a new Codex CLI session and run `/mcp` to check the active server and its tools.
+
+### Manual configuration
+
+Alternatively, add the following to `~/.codex/config.toml`, replacing the placeholder
+values. Use either this method or the CLI command above.
+
+```toml
+[mcp_servers.redmine]
+command = "npx"
+args = ["-y", "mcp-server-redmine"]
+
+[mcp_servers.redmine.env]
+REDMINE_URL = "https://redmine.example.com"
+REDMINE_API_KEY = "your-api-key"
+# Optional: restrict uploads to this directory.
+# REDMINE_UPLOAD_DIR = "/absolute/path/to/uploads"
+```
+
+See the [official MCP documentation](https://developers.openai.com/codex/mcp)
+for more Codex configuration options.
 
 ## Claude Desktop Setup
 
