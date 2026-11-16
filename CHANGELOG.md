@@ -5,16 +5,10 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.0] - 2026-08-26
+## [0.8.0] - 2026-11-16
 
 ### Added
 
-- **Issue attachments support** ([#18]): new `redmine_upload_attachment` tool that reads a
-  local file and posts it to Redmine's attachment API (`POST /uploads.json`), returning an
-  upload token. `redmine_create_issue` and `redmine_update_issue` now accept an `uploads`
-  array of `{ token, filename, content_type?, description? }` entries so files can be
-  attached to issues. The token also works with `redmine_upload_file` to add files to a
-  project's Files module. Up to 10 uploads per issue; local files up to 50 MB.
 - **Attachment download as model context**: new `redmine_download_attachment` tool that
   fetches an attachment by ID. Raster images (png, jpeg, gif, webp) are returned as MCP
   image content blocks so clients feed them to the model as visual context; text
@@ -28,6 +22,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the server reports, and attachment URLs from server responses are only echoed when they
   point at the configured host — the API key is never sent or directed to a host taken
   from a server response.
+- **Codex setup guide**: instructions for registering the server with `codex mcp add`,
+  configuring it manually, restricting uploads, and verifying the registered server.
+
+### Fixed
+
+- The MCP server now reads its version from `package.json` during initialization instead
+  of reporting the hardcoded version `0.1.0`.
+
+## [0.7.0] - 2026-08-26
+
+### Added
+
+- **Issue attachments support** ([#18]): new `redmine_upload_attachment` tool that reads a
+  local file and posts it to Redmine's attachment API (`POST /uploads.json`), returning an
+  upload token. `redmine_create_issue` and `redmine_update_issue` now accept an `uploads`
+  array of `{ token, filename, content_type?, description? }` entries so files can be
+  attached to issues. The token also works with `redmine_upload_file` to add files to a
+  project's Files module. Up to 10 uploads per issue; local files up to 50 MB.
 
 ### Security
 
@@ -64,6 +76,7 @@ Releases prior to 0.6.0 (up to and including [0.5.1]) predate this changelog. Se
 [Git tags](https://github.com/jesusr00/mcp-server-redmine/tags) and
 [release history](https://github.com/jesusr00/mcp-server-redmine/releases) for details.
 
+[0.8.0]: https://github.com/jesusr00/mcp-server-redmine/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/jesusr00/mcp-server-redmine/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/jesusr00/mcp-server-redmine/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/jesusr00/mcp-server-redmine/releases/tag/v0.5.1
