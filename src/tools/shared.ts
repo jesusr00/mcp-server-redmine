@@ -18,7 +18,7 @@ export function withErrorHandling(handler: ToolHandler): ToolHandler {
       return await handler(args, client);
     } catch (e) {
       if (e instanceof ZodError) {
-        const messages = e.errors.map((issue) => `${issue.path.join(".")}: ${issue.message}`);
+        const messages = e.issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`);
         return err(`Invalid input: ${messages.join("; ")}`);
       }
       const message = e instanceof Error ? e.message : String(e);
