@@ -5,6 +5,14 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Security
+
+- Update the MCP SDK, Zod, Vitest, and affected transitive dependencies to patched
+  versions, including a scoped override for the TypeScript parser's `minimatch`
+  dependency. Preserve clean tool validation errors with Zod 4.
+
 ## [0.8.1] - 2026-11-16
 
 ### Added
@@ -93,6 +101,7 @@ Releases prior to 0.6.0 (up to and including [0.5.1]) predate this changelog. Se
 [Git tags](https://github.com/jesusr00/mcp-server-redmine/tags) and
 [release history](https://github.com/jesusr00/mcp-server-redmine/releases) for details.
 
+[Unreleased]: https://github.com/jesusr00/mcp-server-redmine/compare/v0.8.1...HEAD
 [0.8.1]: https://github.com/jesusr00/mcp-server-redmine/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/jesusr00/mcp-server-redmine/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/jesusr00/mcp-server-redmine/compare/v0.6.0...v0.7.0
