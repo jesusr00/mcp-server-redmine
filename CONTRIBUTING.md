@@ -55,6 +55,38 @@ the same checks CI runs:
 pnpm lint && pnpm typecheck && pnpm test && pnpm build
 ```
 
+## Publishing Releases
+
+The publish workflow uses [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/)
+with GitHub Actions OIDC and the `npm` GitHub environment. No npm automation token is required.
+Configure a trusted publisher in the npm package settings with these values:
+
+| Setting              | Value                |
+| -------------------- | -------------------- |
+| Provider             | GitHub Actions       |
+| Organization or user | `jesusr00`           |
+| Repository           | `mcp-server-redmine` |
+| Workflow filename    | `publish.yml`        |
+| Environment name     | `npm`                |
+| Allowed actions      | Allow `npm publish`  |
+
+Publishing a GitHub release starts the workflow through `release.published`.
+Pushing a tag or saving a release draft does not publish to npm. The release's tag
+must match the version in `package.json`.
+
+To retry an unpublished release after fixing the workflow, run the updated workflow
+from `main` and provide the existing tag:
+
+```bash
+gh workflow run publish.yml --ref main -f tag=v0.8.0
+```
+
+The manual run checks out the existing tag and verifies its package version before
+publishing. Re-running the original failed run would use the old workflow, so use
+the manual trigger after the fix is merged. The release tag does not need to move.
+Release events use the workflow stored in the release tag, so tags created before
+this workflow update also need the manual trigger from `main`.
+
 ## Project Structure
 
 ```
