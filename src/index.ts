@@ -1,6 +1,7 @@
 import { isAbsolute } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio";
+import packageJson from "../package.json";
 import { RedmineClient } from "@/client/redmine";
 import { registerAllTools } from "@/tools";
 
@@ -54,7 +55,7 @@ if (REDMINE_UPLOAD_DIR !== undefined) {
 
 async function main() {
   const client = new RedmineClient({ baseUrl: validatedUrl, apiKey: REDMINE_API_KEY! });
-  const server = new McpServer({ name: "redmine-mcp", version: "0.1.0" });
+  const server = new McpServer({ name: "redmine-mcp", version: packageJson.version });
 
   registerAllTools(server, client);
 
