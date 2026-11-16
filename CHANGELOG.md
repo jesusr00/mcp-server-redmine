@@ -5,6 +5,23 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.1] - 2026-11-16
+
+### Added
+
+- Manual publication of existing release tags to retry unpublished versions after
+  a workflow fix without moving the original tag.
+
+### Changed
+
+- Automatic npm publication now starts when a GitHub release is published instead
+  of when a tag is pushed.
+
+### Fixed
+
+- npm publishing now uses Trusted Publishing (OIDC) with Node.js 24 and npm 11,
+  removing the dependency on a static `NPM_TOKEN`.
+
 ## [0.8.0] - 2026-11-16
 
 ### Added
@@ -76,6 +93,7 @@ Releases prior to 0.6.0 (up to and including [0.5.1]) predate this changelog. Se
 [Git tags](https://github.com/jesusr00/mcp-server-redmine/tags) and
 [release history](https://github.com/jesusr00/mcp-server-redmine/releases) for details.
 
+[0.8.1]: https://github.com/jesusr00/mcp-server-redmine/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/jesusr00/mcp-server-redmine/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/jesusr00/mcp-server-redmine/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/jesusr00/mcp-server-redmine/compare/v0.5.1...v0.6.0
