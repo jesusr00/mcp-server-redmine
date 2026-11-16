@@ -165,9 +165,8 @@ docs: clarify Claude Desktop setup steps
 4. Open a PR against `main` and fill out the PR template.
 5. Keep PRs focused — one logical change per PR is easier to review.
 
-A maintainer will review your PR. Automated checks (CI + an automated code
-review) run on every PR. Please respond to feedback and keep your branch up to
-date with `main`.
+A maintainer will review your PR. Automated CI checks run on every PR. Please
+respond to feedback and keep your branch up to date with `main`.
 
 ## Reporting Bugs & Requesting Features
 
